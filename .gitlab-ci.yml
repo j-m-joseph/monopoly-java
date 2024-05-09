@@ -1,4 +1,6 @@
-image: openjdk:17-alpine
+# image: openjdk:17-alpine
+image: eclipse-temurin:17
+
 
 
 default:
