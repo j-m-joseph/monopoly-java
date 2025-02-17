@@ -4,8 +4,8 @@ plugins {
     id 'checkstyle'
     id 'idea'
     id 'application'
-    id 'info.solidsoft.pitest' version '1.9.11'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'info.solidsoft.pitest' version '1.15.0'
+    id 'com.gradleup.shadow' version '8.3.6'
 
 }
 
@@ -23,15 +23,15 @@ repositories {
 
 dependencies {
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.24.3'
 
 
-    testImplementation(platform('org.junit:junit-bom:5.9.2'))
-    testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
-    testImplementation('org.mockito:mockito-core:5.2.0')
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
+    testImplementation(platform('org.junit:junit-bom:5.11.4'))
+    testImplementation('org.junit.jupiter:junit-jupiter:5.11.4')
+    testImplementation('org.mockito:mockito-core:5.15.2')
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.4")
 
 }
 
@@ -67,7 +67,7 @@ application {
 
 //tool configuration
 checkstyle {
-    toolVersion = 9.2
+    toolVersion = "10.21.2"
     checkstyleMain.enabled = true
     checkstyleTest.enabled = false
 }
@@ -78,7 +78,7 @@ checkstyleMain {
 }
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.12"
     //reportsDirectory = layout.buildDirectory.dir('jacocoHtml')
 }
 
@@ -107,6 +107,9 @@ jacocoTestCoverageVerification {
     }
 }
 check.dependsOn jacocoTestCoverageVerification
+
+build.dependsOn 'pitest'
+
 // create combined task
 
 task buildAndReport {
@@ -119,11 +122,11 @@ rootProject.tasks.named("jar") {
 
 pitest {
     targetClasses = ['com.cm6123.monopoly.*']  //by default "${project.group}.*"
-    pitestVersion = '1.9.11' //not needed when a default PIT version should be used
+    pitestVersion = '1.14.4' //not needed when a default PIT version should be used
     threads = 4
     outputFormats = ['XML', 'HTML']
     timestampedReports = false
-    junit5PluginVersion = '1.1.2'
+    junit5PluginVersion = '1.2.0'
 
     reportAggregator {
         testStrengthThreshold.set(50)
