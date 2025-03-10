@@ -19,9 +19,14 @@ targetCompatibility = 17
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
+
+
 dependencies {
+
+
 
     implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
     implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
@@ -127,6 +132,7 @@ pitest {
     outputFormats = ['XML', 'HTML']
     timestampedReports = false
     junit5PluginVersion = '1.2.0'
+    verbose = true
 
     reportAggregator {
         testStrengthThreshold.set(50)
