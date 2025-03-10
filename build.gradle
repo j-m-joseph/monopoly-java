@@ -1,3 +1,4 @@
+
 plugins {
     id 'java'
     id 'jacoco'
@@ -11,6 +12,12 @@ plugins {
 
 apply plugin: 'info.solidsoft.pitest.aggregator' // to 'pitestReportAggregate' appear
 
+task createStartScripts(type: CreateStartScripts) {
+    doLast{
+    System.getenv().put('classpath','')
+    }
+}
+
 group 'com.nsa.cm6123-6623'
 version '1.0-SNAPSHOT'
 
@@ -19,6 +26,7 @@ targetCompatibility = 17
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -127,6 +135,9 @@ pitest {
     outputFormats = ['XML', 'HTML']
     timestampedReports = false
     junit5PluginVersion = '1.2.0'
+	verbose = true
+    //mainProcessJvmArgs = ['-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005']
+
 
     reportAggregator {
         testStrengthThreshold.set(50)
