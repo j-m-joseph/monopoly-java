@@ -26,6 +26,11 @@ public class Welcome {
     private static final String AFTERNOON = "afternoon";
 
     /**
+     * Set the hour of the day equal to midday.
+     */
+    private static final Integer MIDDAY =12;
+
+    /**
      * Create a logger for the class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Welcome.class);
@@ -61,7 +66,7 @@ public class Welcome {
 
         String timeOfDay;
 
-        if (now.getHour() < 12) {
+        if (now.getHour() < MIDDAY) {
             timeOfDay = MORNING;
         } else {
             timeOfDay = AFTERNOON;
