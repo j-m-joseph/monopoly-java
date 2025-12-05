@@ -23,7 +23,8 @@ before_script:
   - pwd
   - wget https://github.com/reposense/RepoSense/releases/download/v4.0/RepoSense.jar
   - echo "The build directory is '$CI_BUILDS_DIR'"
-  #- java -jar RepoSense.jar -r file://. -o public
+  - CURRDIR="$(pwd)"
+  - java -jar RepoSense.jar -r $CURRDIR -o public
   #- ls -laR
   
 cache:
