@@ -21,10 +21,12 @@ before_script:
   - rm -fr .gradle/caches/*/plugin-resolution/
   - chmod +x gradlew
   - pwd
+  - CURRDIR="$(pwd)"
+  - cd /usr/lib
   - wget https://github.com/reposense/RepoSense/releases/download/v4.0/RepoSense.jar
   - echo "The build directory is '$CI_BUILDS_DIR'"
-  - CURRDIR="$(pwd)"
-  - java -jar RepoSense.jar -r $CURRDIR -o public
+
+  - java -jar RepoSense.jar -r $CURRDIR -o $CI_BUILDS_DIR/public
   #- ls -laR
   
 cache:
