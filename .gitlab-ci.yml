@@ -20,6 +20,10 @@ before_script:
   - rm -f  .gradle/caches/modules-2/modules-2.lock
   - rm -fr .gradle/caches/*/plugin-resolution/
   - chmod +x gradlew
+  - pwd
+  - wget https://github.com/reposense/RepoSense/releases/download/v4.0/RepoSense.jar
+  - java -jar RepoSense.jar
+  
 cache:
   key: gradle-cache-key
   paths:
