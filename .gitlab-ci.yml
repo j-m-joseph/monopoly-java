@@ -22,7 +22,8 @@ before_script:
   - chmod +x gradlew
   - pwd
   - wget https://github.com/reposense/RepoSense/releases/download/v4.0/RepoSense.jar
-  - java -jar RepoSense.jar -r . -o public
+  #- java -jar RepoSense.jar -r . -o public
+  - ls -lR
   
 cache:
   key: gradle-cache-key
