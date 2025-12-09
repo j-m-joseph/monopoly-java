@@ -33,7 +33,7 @@ before_script:
   - git --version
 
   - CURRDIR="$(pwd)"
-  - cd /usr/lib
+  # - cd /usr/lib
 
 
   - npm i -g gitinspector
@@ -44,7 +44,7 @@ before_script:
   - echo "The build directory is '$CI_BUILDS_DIR'"
 
   - cd $CURRDIR
-  - gitinspector.py
+  - python gitinspector.py
 
   # - java -jar RepoSense.jar -r $CURRDIR -o $CI_BUILDS_DIR/public
   #- ls -laR
