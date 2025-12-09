@@ -21,6 +21,10 @@ before_script:
   - rm -fr .gradle/caches/*/plugin-resolution/
   - chmod +x gradlew
   - pwd
+
+  - python --version
+  - git --version
+
   - CURRDIR="$(pwd)"
   - cd /usr/lib
 
