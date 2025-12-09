@@ -23,7 +23,7 @@ before_script:
   - pwd
   - CURRDIR="$(pwd)"
   - cd /usr/lib
-  - wget https://github.com/ejwa/gitinspector/releases/download/v0.4.4/gitinspector_0.4.4-1_all.deb
+  - curl https://github.com/ejwa/gitinspector/releases/download/v0.4.4/gitinspector_0.4.4-1_all.deb
   - dpkg -i ./gitinspector_0.4.4-1_all.deb
   - apt install -f
   
