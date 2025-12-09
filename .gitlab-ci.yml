@@ -1,5 +1,5 @@
 # image: openjdk:17-alpine
-image: mcr.microsoft.com/openjdk/jdk:21-ubuntu
+image: eclipse-temurin:21
 
 
 
@@ -22,18 +22,22 @@ before_script:
   - chmod +x gradlew
   - pwd
 
+  - apt-get update
+  - apt-get -y install wget
+  - apt-get -y install python3
+  - apt-get -y install git
+
   - python --version
   - git --version
 
   - CURRDIR="$(pwd)"
   - cd /usr/lib
 
-  - apt-get update
-  - apt-get -y install wget
+
 
   - wget https://github.com/ejwa/gitinspector/releases/download/v0.4.4/gitinspector_0.4.4-1_all.deb
-  - dpkg -i ./gitinspector_0.4.4-1_all.deb
-  - apt install -f
+  - apt-get -y install ./gitinspector_0.4.4-1_all.deb
+ 
   
   - echo "The build directory is '$CI_BUILDS_DIR'"
 
