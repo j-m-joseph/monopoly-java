@@ -23,10 +23,15 @@ before_script:
   - pwd
   - CURRDIR="$(pwd)"
   - cd /usr/lib
-  - wget https://github.com/reposense/RepoSense/releases/download/v4.0/RepoSense.jar
+  - wget https://github.com/ejwa/gitinspector/releases/download/v0.4.4/gitinspector_0.4.4-1_all.deb
+  - sudo dpkg -i gitinspector_0.4.4-1_all.deb
+  
   - echo "The build directory is '$CI_BUILDS_DIR'"
 
-  - java -jar RepoSense.jar -r $CURRDIR -o $CI_BUILDS_DIR/public
+  - cd $CURRDIR
+  - gitinspector.py
+
+  # - java -jar RepoSense.jar -r $CURRDIR -o $CI_BUILDS_DIR/public
   #- ls -laR
   
 cache:
