@@ -24,7 +24,7 @@ before_script:
   - CURRDIR="$(pwd)"
   - cd /usr/lib
   - wget https://github.com/ejwa/gitinspector/releases/download/v0.4.4/gitinspector_0.4.4-1_all.deb
-  - sudo dpkg -i gitinspector_0.4.4-1_all.deb
+  - apt install ./gitinspector_0.4.4-1_all.deb
   
   - echo "The build directory is '$CI_BUILDS_DIR'"
 
