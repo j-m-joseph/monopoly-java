@@ -35,8 +35,8 @@ before_script:
   - CURRDIR="$(pwd)"
  
   #- wget https://github.com/ejwa/gitinspector/archive/refs/tags/v0.4.4.tar.gz
-  - wget https://github.com/jpwhite3/gitinspector/archive/refs/tags/v0.4.4.tar.gz
-  - tar -zxvf v0.4.4.tar.gz
+  - wget https://github.com/jpwhite3/gitinspector/archive/refs/tags/v0.5.0dev.tar.gz
+  - tar -zxvf v0.5.0dev.tar.gz
   
   - echo "The build directory is '$CI_BUILDS_DIR'"
 
