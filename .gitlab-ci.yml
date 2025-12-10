@@ -10,6 +10,7 @@ default:
 
 
 stages:
+  - analyse
   - build
   - publish
 
@@ -20,41 +21,6 @@ before_script:
   - rm -f  .gradle/caches/modules-2/modules-2.lock
   - rm -fr .gradle/caches/*/plugin-resolution/
   - chmod +x gradlew
-  - pwd
-
-  - apt-get update
-  - apt-get -y install software-properties-common
-  - add-apt-repository ppa:deadsnakes/ppa
-
-  - apt-get -y install wget
-  - apt-get -y install python3.9
-  - apt-get -y install python-is-python3
-  - apt-get -y install python3-venv python3-pip
-  - apt-get -y install git
-  - apt-get -y install tar
-
-  - python --version
-  - git --version
-
-  - CURRDIR="$(pwd)"
- 
-  #- wget https://github.com/ejwa/gitinspector/archive/refs/tags/v0.4.4.tar.gz
-  - wget https://github.com/jpwhite3/gitinspector/archive/refs/tags/v0.5.0dev.tar.gz
-  - tar -zxvf v0.5.0dev.tar.gz
-  # - python -m pip install -r requirements.txt
-  - python3 -m venv .venv
-  - source .venv/bin/activate
-  - python3 -m pip install -r gitinspector-0.5.0dev/requirements.txt
-
-
-  
-  - echo "The build directory is '$CI_BUILDS_DIR'"
-
-  - cd $CURRDIR
-  - python gitinspector-0.5.0dev/gitinspector/gitinspector.py  
-
-  # - java -jar RepoSense.jar -r $CURRDIR -o $CI_BUILDS_DIR/public
-  #- ls -laR
   
 cache:
   key: gradle-cache-key
@@ -62,6 +28,25 @@ cache:
     - .gradle/wrapper
     - .gradle/caches
   policy: pull
+
+gitinspector:
+  stage: analyse
+  image: python:3.7
+  before_script:
+    - apt-get update && apt-get install -y git
+    - git clone https://github.com/ejwa/gitinspector.git
+    - cd gitinspector
+    - git checkout v0.4.4
+    - cd ..
+  script:
+    - mkdir -p reports
+    - python gitinspector/gitinspector/gitinspector.py -HTlrm -F html -f html,js,json,css,csv,ts,java > reports/gitinspector.html
+  artifacts:
+    paths:
+      - reports/
+    expire_in: 30 days
+    expose_as: 'GitInspector Report'
+  only: tags
 
 build:gradle:
   stage: build
