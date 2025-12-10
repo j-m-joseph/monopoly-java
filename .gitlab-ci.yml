@@ -86,6 +86,7 @@ pages:
     - mv ./build/reports/checkstyle/ public
     - mv ./build/jacocoHtml/ public
     - mv ./build/libs/*.jar public/build/libs
+    - mv ./reports/ public
     - pwd
     - ls -lR public
 
