@@ -46,7 +46,8 @@ gitinspector:
       - reports/
     expire_in: 30 days
     expose_as: 'GitInspector Report'
-  only: tags
+  only: 
+    - tags
 
 build:gradle:
   stage: build
