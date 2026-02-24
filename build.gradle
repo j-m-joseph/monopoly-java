@@ -4,18 +4,19 @@ plugins {
     id 'checkstyle'
     id 'idea'
     id 'application'
-    id 'info.solidsoft.pitest' version '1.15.0'
-    id 'com.gradleup.shadow' version '8.3.6'
+    id 'info.solidsoft.pitest' version '1.19.0-rc.3'
+    id 'com.gradleup.shadow' version '9.3.1'
 
 }
 
 apply plugin: 'info.solidsoft.pitest.aggregator' // to 'pitestReportAggregate' appear
 
-group 'com.nsa.cm6123-6623'
-version '1.0-SNAPSHOT'
+group = 'com.nsa.cm6123-6623'
+version = '1.0-SNAPSHOT'
 
-sourceCompatibility = 17
-targetCompatibility = 17
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
 
 repositories {
     mavenCentral()
@@ -53,7 +54,7 @@ run{
     standardInput = System.in
 }
 
-jar {
+/*jar {
     manifest {
         attributes ('Main-Class': 'com.cm6123.monopoly.app.Application',
         'Multi-Release':'true')
@@ -61,13 +62,12 @@ jar {
     }
     from sourceSets.main.allSource
 
-}
+}*/
 
 
 
 application {
-    mainClassName = 'com.cm6123.monopoly.app.Application'
-
+    mainClass = 'com.cm6123.monopoly.app.Application'
 }
 
 //tool configuration
@@ -127,7 +127,7 @@ rootProject.tasks.named("jar") {
 
 pitest {
     targetClasses = ['com.cm6123.monopoly.*']  //by default "${project.group}.*"
-    pitestVersion = '1.14.4' //not needed when a default PIT version should be used
+    //pitestVersion = '1.14.4' //not needed when a default PIT version should be used
     threads = 4
     outputFormats = ['XML', 'HTML']
     timestampedReports = false
