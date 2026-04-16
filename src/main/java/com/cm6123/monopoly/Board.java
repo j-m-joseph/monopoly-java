@@ -1,27 +1,36 @@
 package com.cm6123.monopoly;
 
-public class Board {
+import java.util.List;
+public final class Board {
 
     /**
-     * The number of squares on the board.
+     * Field that can hold 16 items.
+     * Squares is the name of the field.
      */
-    private final int boardsize;
+    private final List<Property> squares;
 
     /**
-     * Build a board with a given size.
-     * @param  size the number of squares
+     *Constructs a new board with a given list of squares.
+     * @param squareList list of 16 squares null for roads
      */
-    public Board(final int size) {
-        this.boardsize = size;
+    public Board(final List<Property> squareList) {
+        this.squares = squareList;
+        }
+
+    /**
+     * Returns square at given position.
+     * @param position the 0 index
+     * @return the property position
+     */
+    public Property getSquare(final int position) {
+        return squares.get(position);
     }
 
     /**
-     * Returns the board size.
-     *
-     * @return the number of squares on the board
+     * Returns the number of squares on the board.
+     * @return the board sixe (16)
      */
-    public int getBoardsize() {
-        return boardsize;
+    public int getSize() {
+        return squares.size();
     }
-
 }

@@ -1,6 +1,7 @@
 package com.cm6123.monopoly.s1_navigation;
 import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Property;
 import org.junit.jupiter.api.Test;
 import com.cm6123.monopoly.Player;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +14,10 @@ import java.util.List;
 public class Stage1Test {
     @Test
     public void testGameRuns() {
-        Board board = new Board(16);
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
         Player player1 = new Player();
         Player player2 = new Player();
         //Creates 2 new players
@@ -21,6 +25,7 @@ public class Stage1Test {
         playerList.add(player1);
         playerList.add(player2);
 
+        Board board = new Board(squares);
         Game game = new Game(board, playerList);
         game.playRounds(10);
         //method playRounds

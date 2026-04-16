@@ -2,8 +2,8 @@ package com.cm6123.monopoly;
 
 //A list is more flexible
 import com.cm6123.monopoly.dice.Dice;
-
 import java.util.List;
+
 
 public final class Game {
 
@@ -26,7 +26,8 @@ public final class Game {
 
     /**
      * Contrustor line.
-     * @param gameboard the game board
+     *
+     * @param gameboard  the game board
      * @param playerList the list of players
      */
     public Game(final Board gameboard, final List<Player> playerList) {
@@ -40,6 +41,7 @@ public final class Game {
      * Run the game for a specified number of rounds.
      * For each round every player takes one turn.
      * void is for when no values are returned.
+     *
      * @param numberOfRounds the number of rounds to play
      */
     public void playRounds(final int numberOfRounds) {
@@ -51,14 +53,15 @@ public final class Game {
                 //name the rolling player currentplayer
                 //then that player will be having their turn
                 int steps = dice.roll();
-                currentplayer.move(steps, board.getBoardsize());
-
+                currentplayer.move(steps, board.getSize());
+                playerOnSquare(currentplayer);
             }
         }
     }
 
     /**
      * Returns the player with the highest balance.
+     *
      * @return the richest player
      */
     public Player getWinner() {
@@ -73,5 +76,21 @@ public final class Game {
             }
         }
         return winner;
+    }
+
+    /**
+     * What to do with the square the player is standing on.
+     * @param player the player whose turn it currently is
+     */
+    public void playerOnSquare(final Player player) {
+
+        Object square = board.getSquare(player.getPosition());
+        if (square instanceof Property property) {
+            if (property.getPropertyOwner() == null
+                    && player.getBalance() >= property.getPropertyPurchasePrice()) {
+                player.setBalance(player.getBalance() - property.getPropertyPurchasePrice());
+                property.setPropertyOwner(player);
+            }
+        }
     }
 }
