@@ -80,16 +80,22 @@ public final class Game {
 
     /**
      * What to do with the square the player is standing on.
+     *
      * @param player the player whose turn it currently is
      */
-    public void playerOnSquare(final Player player) {
+    public void playerOnSquare(final Player currentplayer) {
 
-        Object square = board.getSquare(player.getPosition());
+        Object square = board.getSquare(currentplayer.getPosition());
         if (square instanceof Property property) {
             if (property.getPropertyOwner() == null
-                    && player.getBalance() >= property.getPropertyPurchasePrice()) {
-                player.setBalance(player.getBalance() - property.getPropertyPurchasePrice());
-                property.setPropertyOwner(player);
+                    && currentplayer.getBalance() >= property.getPropertyPurchasePrice()) {
+                currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyPurchasePrice());
+                property.setPropertyOwner(currentplayer);
+            } else if (property.getPropertyOwner() != null
+                    && (property.getPropertyOwner() != currentplayer)) {
+
+                currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyRentalPrice());
+                property.getPropertyOwner().setBalance(property.getPropertyOwner().getBalance() + property.getPropertyRentalPrice());
             }
         }
     }
