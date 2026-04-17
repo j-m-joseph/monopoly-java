@@ -95,8 +95,19 @@ public final class Game {
                     && (property.getPropertyOwner() != currentplayer)) {
 
                 currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyRentalPrice());
+                handleBankruptcy(currentplayer);
                 property.getPropertyOwner().setBalance(property.getPropertyOwner().getBalance() + property.getPropertyRentalPrice());
             }
+        }
+    }
+
+    /**
+     * Handles players who have neg balance by selling properties.
+     *
+     * @param player the player who could be bankrupt
+     */
+    private void handleBankruptcy(final Player currentplayer) {
+        while (currentplayer.getBalance() < 0/* && currentplayer Owns atleast1 property*/) {
         }
     }
 }
