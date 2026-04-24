@@ -3,4 +3,4 @@
  * This is the package root that should be subjected to automated testing.
  * It should not have any user interface code in it.
  */
-package com.cm6123.monopoly.game_provided;
+package com.cm6123.monopoly.game;
