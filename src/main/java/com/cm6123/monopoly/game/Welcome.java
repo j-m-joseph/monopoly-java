@@ -1,4 +1,4 @@
-package com.cm6123.monopoly.game;
+package com.cm6123.monopoly.game_provided;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

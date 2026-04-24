@@ -81,7 +81,7 @@ public final class Game {
     /**
      * What to do with the square the player is standing on.
      *
-     * @param player the player whose turn it currently is
+     * @param currentplayer the player whose turn it currently is
      */
     public void playerOnSquare(final Player currentplayer) {
 
@@ -104,10 +104,41 @@ public final class Game {
     /**
      * Handles players who have neg balance by selling properties.
      *
-     * @param player the player who could be bankrupt
+     * @param currentplayer the player who could be bankrupt
      */
     private void handleBankruptcy(final Player currentplayer) {
-        while (currentplayer.getBalance() < 0/* && currentplayer Owns atleast1 property*/) {
+        while (currentplayer.getBalance() < 0/* && currentplayer Owns atleast 1 property*/) {
+            Property propertyForSale = findCheapestProperty(currentplayer);
+            if (propertyForSale == null) {
+                break;
+            } else {
+                int halfPriceOfProperty = propertyForSale.getPropertyPurchasePrice() / 2;
+                int newBalance = currentplayer.getBalance() + halfPriceOfProperty;
+                currentplayer.setBalance(newBalance);
+                propertyForSale.setPropertyOwner(null);
+            }
+            if (currentplayer.getBalance() < 0) {
+                players.remove(currentplayer);
+                //removes player if their balance becomes -ve
+                //they are out of the game
+            }
         }
+    }
+
+    private Property findCheapestProperty(final Player player) {
+        Property cheapest = null;
+        for (int index = 0; index < board.getSize(); index++) {
+            Object square = board.getSquare(index);
+            if (square instanceof Property property) {
+                if (property.getPropertyOwner() == player) {
+                    if (cheapest == null) {
+                        cheapest = property;
+                    } else if (property.getPropertyPurchasePrice() < cheapest.getPropertyPurchasePrice()) {
+                        cheapest = property;
+                    }
+                }
+            }
+        }
+        return cheapest;
     }
 }
