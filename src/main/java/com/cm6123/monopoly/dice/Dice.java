@@ -17,13 +17,33 @@ public class Dice {
   }
 
   /**
+   * I want it to hold a specific dice roll value to test both outcomes.
+   */
+  private Integer forcedRoll = null;
+  //only dice class will see the var
+  // initially no forced roll is set
+  //can't be final it needs to be changeable
+
+  /**
    * Roll to dice to get a value.
-   *
+   * If a forced roll is set through setNextRoll(),the value is returned and cleared.
    * @return an integer between 1 and the number of faces inclusive.
    */
   public Integer roll() {
+    if (this.forcedRoll != null) {
+      int result = forcedRoll;
+      this.forcedRoll = null;
+      return result;
+    }
     Double tempRoll = Math.ceil(Math.random() * faces.doubleValue());
     return tempRoll.intValue();
   }
 
+  /**
+   * forced roll to return a wanted number (test).
+   * @param roll the value to return on the next roll
+   */
+  public void setNextRoll(final Integer roll) {
+    this.forcedRoll = roll;
+  }
 }

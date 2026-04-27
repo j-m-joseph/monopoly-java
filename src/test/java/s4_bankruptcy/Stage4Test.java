@@ -1,6 +1,5 @@
 package s4_bankruptcy;
 
-
 import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Game;
 import com.cm6123.monopoly.Player;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Stage4Test {
     @Test
-    public void testplayerRecovery() {
+    public void testplayerBankruptcyRecovery() {
         List<Property> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
             squares.add(null);

@@ -1,9 +1,9 @@
 package com.cm6123.monopoly;
 
 //A list is more flexible
-import com.cm6123.monopoly.dice.Dice;
 import java.util.List;
-
+//Dice import
+import com.cm6123.monopoly.dice.Dice;
 
 public final class Game {
 
@@ -25,6 +25,23 @@ public final class Game {
     private final Dice dice;
 
     /**
+     * Array of size 16 to set certain squares as CycleRaceSquares.
+     */
+    private final boolean[] cycleRacePositions = new boolean[16];
+    // each element is TRUE/FALSE
+    //creates an array of 16 elements all False at the start
+
+    /**
+     * Marks the square as a CycleRace square.
+     *
+     * @param position the index of the square on the board
+     *                 if a 4, 5 or 6 is rolled the player doesn't move
+     */
+    public void setCycleRaceSquare(final int position) {
+        cycleRacePositions[position] = true;
+    }
+
+    /**
      * Contrustor line.
      *
      * @param gameboard  the game board
@@ -35,6 +52,16 @@ public final class Game {
         this.players = playerList;
         this.dice = new Dice(6);
         // 6 faces for a standard die
+
+    }
+
+    /**
+     * Forces the next dice roll to be a specific value to test.
+     *
+     * @param value the value the dice shout return 1 through 6
+     */
+    public void setNextDiceRoll(final int value) {
+        dice.setNextRoll(value);
     }
 
     /**
@@ -53,6 +80,14 @@ public final class Game {
                 //name the rolling player currentplayer
                 //then that player will be having their turn
                 int steps = dice.roll();
+                //player has cyclerace restriction from previous turn
+                if (currentplayer.getCycleRestriction()) {
+                    if (steps >= 4) {
+                        steps = 0;
+                    }
+                    currentplayer.setCycleRestriction(false);
+                }
+                //move player if needed
                 currentplayer.move(steps, board.getSize());
                 playerOnSquare(currentplayer);
             }
@@ -80,30 +115,81 @@ public final class Game {
 
     /**
      * What to do with the square the player is standing on.
-     *
      * @param currentplayer the player whose turn it currently is
      */
     public void playerOnSquare(final Player currentplayer) {
+        //player's current pos to check for us for pass HOME check
+        int currentPosition = currentplayer.getPosition();
+        if (board.getUndergroundStation(currentPosition)) {
+            //if statement calls method in Board.java to check square status
+            int newPosition = board.getOtherStation(currentPosition);
+            //return RANDOM pos for another station
+            //store it as var newPosition so player will move
+            currentplayer.setPosition(newPosition);
+            //player moved to a different station imediately
+            if (newPosition < currentPosition) {
+                //16 squares 0 square is HOME
+                //pass rules for Home
+                int reward = getReward(currentplayer);
+                currentplayer.setBalance(currentplayer.getBalance() + reward);
+            }
+            return;
+        }
+        handleNonStationSquare(currentplayer);
+        //only runs of the square is not a station
+        //too long of a block for checkstyle so split into 2
+    }
 
+    /**
+     * Handles everythig when player is not on station square.
+     * @param currentplayer the player curently playing
+     */
+    private void handleNonStationSquare(final Player currentplayer) {
         Object square = board.getSquare(currentplayer.getPosition());
         if (square instanceof Property property) {
-            if (property.getPropertyOwner() == null
-                    && currentplayer.getBalance() >= property.getPropertyPurchasePrice()) {
+            if (property.getPropertyOwner() == null && currentplayer.getBalance() >= property.getPropertyPurchasePrice()) {
                 currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyPurchasePrice());
                 property.setPropertyOwner(currentplayer);
-            } else if (property.getPropertyOwner() != null
-                    && (property.getPropertyOwner() != currentplayer)) {
-
+            } else if (property.getPropertyOwner() != null && (property.getPropertyOwner() != currentplayer)) {
                 currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyRentalPrice());
                 handleBankruptcy(currentplayer);
                 property.getPropertyOwner().setBalance(property.getPropertyOwner().getBalance() + property.getPropertyRentalPrice());
             }
+        } else if (cycleRacePositions[currentplayer.getPosition()]) {
+            currentplayer.setCycleRestriction(true);
         }
     }
 
     /**
+     * Calculates the reward for passing Home and 1% of owned property.
+     * @param currentplayer the player currently playing and passed Home
+     * @return the total reward monopoly
+     */
+    private int getReward(final Player currentplayer) {
+        int reward = 200;
+        //money player gets when theu pass Home like passing GO
+        int totalRent = 0;
+        //sets rent value to 0 initially
+        for (int i = 0; i < board.getSize(); i++) {
+            //check is the quare a property and if currentplayer owns it
+            //if yes add to totalRent
+            Object square = board.getSquare(i);
+            //counter starting at 0
+
+            if (square instanceof Property property && property.getPropertyOwner() == currentplayer) {
+                //checks if square is a property
+                //if yes creates a property var that acts as Property
+                //chacks if current player owns the property
+                // && means both conditions must be true
+                totalRent += property.getPropertyRentalPrice();
+            }
+        }
+        reward += totalRent / 100;
+        return reward;
+    }
+
+    /**
      * Handles players who have neg balance by selling properties.
-     *
      * @param currentplayer the player who could be bankrupt
      */
     private void handleBankruptcy(final Player currentplayer) {
@@ -125,6 +211,11 @@ public final class Game {
         }
     }
 
+    /**
+     * Finds property with the lowest purchase value owned by the player.
+     * @param player the player whose properties are being sold
+     * @return the cheapest property the player owns and null if they don't own any
+     */
     private Property findCheapestProperty(final Player player) {
         Property cheapest = null;
         for (int index = 0; index < board.getSize(); index++) {

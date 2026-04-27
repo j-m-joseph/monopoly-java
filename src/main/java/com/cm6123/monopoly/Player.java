@@ -6,6 +6,9 @@ public final class Player {
     private int balance = 1000;
     /** The Player's current position on the board. */
     private int position = 0;
+    /** The Cycle race field.
+     * False is the default field. */
+    private boolean cycleRestriction;
 
     /**
      *  Returns the Player's current balance.
@@ -45,5 +48,20 @@ public final class Player {
         }
         position = newPosition;
         }
-    }
 
+    /** Cycle restriction rule.
+     * @return getter method
+     * TRUE if the player has a cycle race restriction
+     */
+    public boolean getCycleRestriction() {
+        return cycleRestriction;
+        }
+
+    /** to restrict the next move.
+     * @param newCycleRestriction TRUE to restrict the next move
+     *  False to remove the restriction
+     */
+    public void setCycleRestriction(final boolean newCycleRestriction) {
+        this.cycleRestriction = newCycleRestriction;
+        }
+    }

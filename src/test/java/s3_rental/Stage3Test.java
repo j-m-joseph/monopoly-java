@@ -15,7 +15,7 @@ public class Stage3Test {
     @Test
     public void testPropertyRentalTransfers() {
 
-        Property Coraline= new Property("Coraline Road", 100, 10);
+        Property Coraline = new Property("Coraline Road", 100, 10);
         List<Property> squares = new ArrayList<>();
         squares.add(Coraline);
         for (int i = 0; i < 15; i++) {
