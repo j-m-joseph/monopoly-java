@@ -74,5 +74,25 @@ public class Stage5bTest {
         //no properties for this example
     }
 
-
-}
+    @Test
+    public void testGetToOtherStationsWithThreeStations() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+            Board board = new Board(squares);
+            board.addUndergroundStation(new UndergroundStation(4));
+            //station at position 4
+            board.addUndergroundStation(new UndergroundStation(9));
+            //station at position 9
+            board.addUndergroundStation(new UndergroundStation(13));
+            //station at position 13
+            for (int i = 0; i < 100; i++) {
+                int other = board.getOtherStation(4);
+                assertNotEquals(4, other);
+                //must not resturn pos 4
+                assertTrue(List.of(9, 13).contains(other));
+                //Verifies TRUE other has to be 9 or 13
+            }
+        }
+    }

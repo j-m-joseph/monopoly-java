@@ -77,4 +77,32 @@ public class Stage5aTest {
         assertFalse(player.getCycleRestriction());
         //same thing but to test the low roll
     }
-}
+    @Test
+    public void testCycleWithFour() {
+        //when the dice rolls 4
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+            Board board = new Board(squares);
+            Player player = new Player();
+            //new player with default balance and pos at 0
+            player.setPosition(2);
+            //moves the player to square 5
+            player.setCycleRestriction(true);
+            //the player lansed on a cycle square on their previous turn
+            List<Player> players = List.of(player);
+            //List with just the player
+            Game game = new Game(board, players);
+            game.setCycleRaceSquare(10);
+            //the game knows that square 5 is cycle square and if the player alands on it execute the function
+            game.setNextDiceRoll(4);
+            //not random for test purpouse returns 4
+            game.playRounds(1);
+            //one round and there is only one player for test
+            assertEquals(2, player.getPosition());
+            //checks that the player's pisition is 5
+            assertFalse(player.getCycleRestriction());
+            //after turn player doesn't have the cycle restriction
+        }
+    }

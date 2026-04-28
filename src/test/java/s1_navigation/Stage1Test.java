@@ -36,4 +36,27 @@ public class Stage1Test {
         Player winner = game.getWinner();
         assertNotNull(winner);
     }
-}
+
+    @Test
+    public void testGetWinnerSameBalance() {
+        //what happens when the game is over and 2 players have the samebalance
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+            Board board = new Board(squares);
+            Player jack = new Player();
+            jack.setBalance(100);
+            //Jack has 100 monopoly
+            Player jill = new Player();
+            jill.setBalance(100);
+            //Jill has 100 monopoly
+            List<Player>players = List.of(jack,jill);
+            //Put Jack and Jill in a list
+            Game game = new Game(board, players);
+            Player winner = game.getWinner();
+            //call get winner
+            assertNotNull(winner);
+            //make sure winner is returned
+        }
+    }
