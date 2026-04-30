@@ -43,9 +43,6 @@ public final class Player {
      */
     public void move(final int steps, final int boardSize) {
         int newPosition = (position + steps) % boardSize;
-        if (newPosition < position) {
-            balance = balance + 200;
-        }
         position = newPosition;
         }
 

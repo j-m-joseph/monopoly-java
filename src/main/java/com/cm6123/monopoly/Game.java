@@ -68,7 +68,6 @@ public final class Game {
      * Run the game for a specified number of rounds.
      * For each round every player takes one turn.
      * void is for when no values are returned.
-     *
      * @param numberOfRounds the number of rounds to play
      */
     public void playRounds(final int numberOfRounds) {
@@ -88,7 +87,28 @@ public final class Game {
                     currentplayer.setCycleRestriction(false);
                 }
                 //move player if needed
+                int oldPosition = (currentplayer.getPosition() - steps + board.getSize()) % board.getSize();
+                //current pos before moving
                 currentplayer.move(steps, board.getSize());
+                //moves player by steps
+                if (currentplayer.getPosition() < oldPosition) {
+                    //checks if new pos is < than old pos
+                    int totlalRent = 0;
+                    for (int i = 0; i < board.getSize(); i++) {
+                        //loops through all 16 squares
+                        Object square = board.getSquare(i);
+                        //gets type of object
+                        if (square instanceof Property property && property.getPropertyOwner() == currentplayer) {
+                            //checks if square is a property
+                            //is the current player the owner of the property check
+                            totlalRent += property.getPropertyRentalPrice();
+                        }
+                    }
+                    int bonus = totlalRent / 100;
+                    //calculates extra 1%
+                    currentplayer.setBalance(currentplayer.getBalance() + 200 + bonus);
+                    //adds 200 to balance
+                }
                 playerOnSquare(currentplayer);
             }
         }
@@ -96,7 +116,6 @@ public final class Game {
 
     /**
      * Returns the player with the highest balance.
-     *
      * @return the richest player
      */
     public Player getWinner() {

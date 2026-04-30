@@ -54,16 +54,15 @@ public class PlayerTest {
     }
 
     @Test
-    public void testMoveWithPassingHome() {
+    public void testMoveWrapsCorrectly() {
         Player player = new Player();
         player.setPosition(14);
         int BeforeMoveBalance = player.getBalance();
         player.move(5, 16);
-        assertEquals(BeforeMoveBalance + 200, player.getBalance());
+        assertEquals(BeforeMoveBalance, player.getBalance());
         assertEquals(3, player.getPosition());
         //Set position to 14 + 5 steps will move to square 3
         //wraps past Home
-        // store balance before move and balance increased by 200
+        // store balance before move
     }
-
 }
