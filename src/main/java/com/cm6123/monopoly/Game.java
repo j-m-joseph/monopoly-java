@@ -68,6 +68,7 @@ public final class Game {
      * Run the game for a specified number of rounds.
      * For each round every player takes one turn.
      * void is for when no values are returned.
+     *
      * @param numberOfRounds the number of rounds to play
      */
     public void playRounds(final int numberOfRounds) {
@@ -93,29 +94,16 @@ public final class Game {
                 //moves player by steps
                 if (currentplayer.getPosition() < oldPosition) {
                     //checks if new pos is < than old pos
-                    int totlalRent = 0;
-                    for (int i = 0; i < board.getSize(); i++) {
-                        //loops through all 16 squares
-                        Object square = board.getSquare(i);
-                        //gets type of object
-                        if (square instanceof Property property && property.getPropertyOwner() == currentplayer) {
-                            //checks if square is a property
-                            //is the current player the owner of the property check
-                            totlalRent += property.getPropertyRentalPrice();
-                        }
-                    }
-                    int bonus = totlalRent / 100;
-                    //calculates extra 1%
-                    currentplayer.setBalance(currentplayer.getBalance() + 200 + bonus);
-                    //adds 200 to balance
+                    addPassingHomeBonus(currentplayer, oldPosition);
+                    playerOnSquare(currentplayer);
                 }
-                playerOnSquare(currentplayer);
             }
         }
     }
 
     /**
      * Returns the player with the highest balance.
+     *
      * @return the richest player
      */
     public Player getWinner() {
@@ -134,6 +122,7 @@ public final class Game {
 
     /**
      * What to do with the square the player is standing on.
+     *
      * @param currentplayer the player whose turn it currently is
      */
     public void playerOnSquare(final Player currentplayer) {
@@ -161,6 +150,7 @@ public final class Game {
 
     /**
      * Handles everythig when player is not on station square.
+     *
      * @param currentplayer the player curently playing
      */
     private void handleNonStationSquare(final Player currentplayer) {
@@ -181,6 +171,7 @@ public final class Game {
 
     /**
      * Calculates the reward for passing Home and 1% of owned property.
+     *
      * @param currentplayer the player currently playing and passed Home
      * @return the total reward monopoly
      */
@@ -250,5 +241,29 @@ public final class Game {
             }
         }
         return cheapest;
+    }
+
+    /**
+     * Adds the passing home plus 1% of the player's owned properties rental price.
+     * @param player the player who moved
+     * @param oldPosition the player's position before moving
+     */
+    private void addPassingHomeBonus(final Player player, final int oldPosition) {
+        //chacks if player has moved to a pos less than previos pos
+        if (player.getPosition() < oldPosition) {
+            int totalRent = 0;
+            for (int i = 0; i < board.getSize(); i++) {
+                //crates var for sum of rentalPrices and loops every sqaure on board
+                Object square = board.getSquare(i);
+                if (square instanceof Property property && property.getPropertyOwner() == player) {
+                    totalRent += property.getPropertyRentalPrice();
+                    //checks if square has a property
+                    //checks if owner of the propery is the current player
+                    //adds property rental price to total
+                }
+            }
+            int bonus = totalRent / 100;
+            player.setBalance(player.getBalance() + 200 + bonus);
+        }
     }
 }
