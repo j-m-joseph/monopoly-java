@@ -26,10 +26,9 @@ public final class Board {
 
     /**
      * Constructs a new board with a given list of squares.
-     *
      * @param squareList list of 16 squares null for roads
-     *                   Initialize undergroundStations list as new ArrayList<>.
-     *                   Empty list for stations to be added.
+     * Initialize undergroundStations list as new ArrayList<>.
+     * Empty list for stations to be added.
      */
     public Board(final List<Property> squareList) {
         this.squares = squareList;
@@ -38,7 +37,6 @@ public final class Board {
 
     /**
      * Returns square at given position.
-     *
      * @param position the 0 index
      * @return the property position
      */
@@ -48,7 +46,6 @@ public final class Board {
 
     /**
      * Returns the number of squares on the board.
-     *
      * @return the board sixe (16)
      */
     public int getSize() {

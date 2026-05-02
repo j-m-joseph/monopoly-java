@@ -4,7 +4,7 @@ package com.cm6123.monopoly;
  * purchase property in Carl Monopoly.
  * inheritance requirement
  */
-public final class Property extends Square {
+public final class Property extends Square implements Purchasable {
 
     /**
      * The name of the property.
