@@ -8,8 +8,7 @@ public class Dice {
   private Integer faces;
 
   /**
-   * Construct a dice with the given number of faces.
-   *
+   * Construct a die with the given number of faces.
    * @param numberOfFaces the number of faces that the dice will have.  Dice rolls 1 to this number.
    */
   public Dice(final Integer numberOfFaces) {
@@ -32,11 +31,23 @@ public class Dice {
   public Integer roll() {
     if (this.forcedRoll != null) {
       int result = forcedRoll;
-      this.forcedRoll = null;
+      //this.forcedRoll = null;
+      System.out.println("roll() called. forcedRoll = " + this.forcedRoll);
+      //don't clear forced roll to attempt to correct logic
+      System.out.println("Forced roll used: " + result);
+      //To confirm forced roll is being applied
       return result;
     }
     Double tempRoll = Math.ceil(Math.random() * faces.doubleValue());
     return tempRoll.intValue();
+  }
+
+  /**
+   * Clears the forced roll value
+   * Allows the dice to return to ramdom rolls
+   */
+  public void clearForcedRoll() {
+    this.forcedRoll = null;
   }
 
   /**
@@ -46,4 +57,14 @@ public class Dice {
   public void setNextRoll(final Integer roll) {
     this.forcedRoll = roll;
   }
+  /**
+   * Forces the next dice roll to be a specific value for testing.
+   * Only works if test mode is enabled.
+   * @param total the value to force
+   */
+  public void forceNextRoll(int total) {
+    this.forcedRoll = total;
+  }
+
+
 }

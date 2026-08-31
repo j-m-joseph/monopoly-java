@@ -2,13 +2,33 @@ package com.cm6123.monopoly;
 
 public final class Player {
 
-    /** The Player's current balance in pounds. */
+    /**
+     * The Player's current balance in pounds.
+     * The Player's current balance in pounds.
+     * The money they are meant to start with
+     */
     private int balance = 1000;
-    /** The Player's current position on the board. */
+
+    /** The Player's current position on the board.
+     * it is set to start at "Home"
+     */
     private int position = 0;
-    /** The Cycle race field.
-     * False is the default field. */
+
+    /**
+     *  The Cycle race field.
+     * False is the default field.
+     */
     private boolean cycleRestriction;
+
+    /**
+     * The teleport fiels.
+     * False is the default field.
+     */
+    private boolean justTeleported;
+    //player's new teleport status
+    //these are all attributes of the player
+    //all private because only the player class shuld access them
+
 
     /**
      *  Returns the Player's current balance.
@@ -35,6 +55,25 @@ public final class Player {
      */
     public void setPosition(final int newPosition) {
         this.position = newPosition;
+    }
+
+    /**
+     * Sets the justTeleported flag.
+     * @param value true if player just teleported
+     */
+    public void setJustTeleported(final boolean value) {
+        this.justTeleported = value;
+    }
+    //The order doesn't matter
+    // grouping by elevance and action and state methods
+    //good for code organization and readability
+
+    /**
+     * Gets the justTeleported flag.
+     * @return true if player just teleported
+     */
+    public boolean getJustTeleported() {
+        return justTeleported;
     }
 
     /** Moves the player to a new position.

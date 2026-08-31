@@ -7,6 +7,8 @@ import com.cm6123.monopoly.Game;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -27,7 +29,8 @@ public class Stage2Test {
         playerList.add(player);
         Game game = new Game(board, playerList);
 
-        game.playerOnSquare(player);
+        Scanner testScanner = new Scanner("yes");
+        game.playerOnSquare(player, testScanner);
         assertEquals(980, player.getBalance());
         assertSame(player, squares.get(0).getPropertyOwner());
     }

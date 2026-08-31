@@ -31,7 +31,6 @@ dependencies {
 
     // delegate SLF4J to LOG4J
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.24.3'
-
     // core is LOG4J
     implementation platform('org.apache.logging.log4j:log4j-bom:2.25.3')
     implementation 'org.apache.logging.log4j:log4j-api:${log4j-api.version}'

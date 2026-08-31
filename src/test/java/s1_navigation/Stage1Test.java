@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class Stage1Test {
@@ -27,7 +28,7 @@ public class Stage1Test {
 
         Board board = new Board(squares);
         Game game = new Game(board, playerList);
-        game.playRounds(10);
+        game.playRounds(10, new Scanner(System.in));
         //method playRounds
         //object game
         //paramaters 10

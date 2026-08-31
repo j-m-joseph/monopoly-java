@@ -40,7 +40,7 @@ public final class Board {
      * @param position the 0 index
      * @return the property position
      */
-    public Property getSquare(final int position) {
+    public Object getSquare(final int position) {
         return squares.get(position);
     }
 
@@ -90,5 +90,14 @@ public final class Board {
             }
         }
         return false;
+    }
+
+    /**
+     * Clears all underground stations from the board.
+     * This method is primarily used for testing purposes to ensure
+     * a clean state before adding specific stations for test scenarios.
+     */
+    public void clearUndergroundStations() {
+        undergroundStations.clear();
     }
 }

@@ -65,7 +65,7 @@ public class Stage5bTest {
         //puts player into list
         Game game = new Game(board, players);
         //creates a new game
-        game.playerOnSquare(player);
+        game.playerOnSquare(player, null);
         //should move player to square 2 and add total balance
         assertEquals(2, player.getPosition());
         //checks player was moved to square 2

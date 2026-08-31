@@ -32,12 +32,15 @@ public class Stage5aTest {
         //marks position 12 as a cycle race square
         player.setPosition(12);
         //set player's position to 12
-        game.playerOnSquare(player);
+        game.playerOnSquare(player, null);
         //cyclerace square logic
         assertTrue(player.getCycleRestriction());
-        game.setNextDiceRoll(5);
+
+        game.setNextDiceRoll(2);
+        game.setNextDiceRoll(3);
         //return a 5 this is for testing
-        game.playRounds(1);
+        //I can use set or force they do the same thing
+        game.playRounds(1, null);
         //next turn apply rule for the cycle square
         assertEquals(12, player.getPosition());
         //player's position is still 12 (unchamged)
@@ -65,12 +68,15 @@ public class Stage5aTest {
         //marks position 12 as a cycle race square
         player.setPosition(12);
         //set player's position to 12
-        game.playerOnSquare(player);
+        game.playerOnSquare(player, null);
         //cyclerace square logic
         assertTrue(player.getCycleRestriction());
-        game.setNextDiceRoll(2);
+        game.forceNextDiceRoll(1);
+        //FORCES 1st die to 1
+        game.forceNextDiceRoll(1);
+        //FORCES 2nd die to 1
         //return a 2 this is for testing
-        game.playRounds(1);
+        game.playRounds(1, null);
         //next turn apply rule for the cycle square
         assertEquals(14, player.getPosition());
         //player's position is 14 (updated)
@@ -96,9 +102,13 @@ public class Stage5aTest {
             Game game = new Game(board, players);
             game.setCycleRaceSquare(10);
             //the game knows that square 5 is cycle square and if the player alands on it execute the function
-            game.setNextDiceRoll(4);
+            game.setNextDiceRoll(2);
+            // Force first die to 2
+            game.setNextDiceRoll(2);
+            // Force second die to 2
             //not random for test purpouse returns 4
-            game.playRounds(1);
+            //is meant to miss turn
+            game.playRounds(1, null);
             //one round and there is only one player for test
             assertEquals(2, player.getPosition());
             //checks that the player's pisition is 5

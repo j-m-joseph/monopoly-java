@@ -31,7 +31,7 @@ public class Stage3Test {
         playerB.setPosition(0);
         playerB.setPosition(0);
         Game game1 = new Game(board, List.of(playerA, playerB));
-                game1.playerOnSquare(playerB);
+                game1.playerOnSquare(playerB, null);
                 assertEquals(1010, playerA.getBalance());
                 assertEquals(990, playerB.getBalance());
     }

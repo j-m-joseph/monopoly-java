@@ -38,7 +38,7 @@ public class Stage4Test {
         player1.setPosition(10);
         player1.move(4, board.getSize());
         //player 1 moves to player 2's property
-        game.playerOnSquare(player1);
+        game.playerOnSquare(player1, null);
         //rent and bankruptcy
         assertEquals(90, player1.getBalance());
         assertEquals(1050, player2.getBalance());
