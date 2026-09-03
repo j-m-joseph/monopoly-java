@@ -152,6 +152,8 @@ public final class Game {
             System.out.println("Continue reached — skipping dice roll!");
             return;  // ← CHANGED from continue to return
         }
+        // Roll dice and move
+        rollAndMove(currentplayer, scanner);
     }
 
     /**
