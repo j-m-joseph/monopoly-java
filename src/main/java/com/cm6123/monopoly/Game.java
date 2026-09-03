@@ -91,7 +91,7 @@ public final class Game {
      * @param roll the value to force the next dice roll to
      *
      */
-    public void forceNextDiceRoll(int roll) {
+    public void forceNextDiceRoll(final int roll) {
         this.dice.forceNextRoll(roll);
     }
 
@@ -103,93 +103,116 @@ public final class Game {
      * @param numberOfRounds the number of rounds to play
      * @param scanner the Scanner for user input
      */
-    public void playRounds(final int numberOfRounds, Scanner scanner) {
+    public void playRounds(final int numberOfRounds, final Scanner scanner) {
 
         for (int round = 0; round < numberOfRounds; round++) {
             System.out.println("Round " + (round + 1) + " begins!");
             //to see if it is actually doing rounds
 
             for (Player currentplayer : players) {
-                //for each player in the list(players)
-                //name the rolling player currentplayer
-                //then that player will be having their turn
-
-                //Check if the player is on a cycle race square at the start of their turn
-                if (cycleRacePositions[currentplayer.getPosition()]) {
-                    currentplayer.setCycleRestriction(true);
-                }
-                // Check bankruptcy at start of turn
-                if (currentplayer.getBalance() < 0) {
-                    handleBankruptcy(currentplayer);
-                }
-                //skip turn if player was removed
-                if (!players.contains(currentplayer)) {
-                    continue;
-                    // Skip to the next player no dice roll
-                }
-
-                //ADD STATION CHECK HERE — before the dice roll
-                if (board.getUndergroundStation(currentplayer.getPosition()) && !currentplayer.getJustTeleported()) {
-                    System.out.println("Station detected — teleporting!");
-                    //print to confirm
-                    currentplayer.setJustTeleported(true);
-                    //Marks as teleported
-                    playerOnSquare(currentplayer, scanner);
-                    System.out.println("Continue reached — skipping dice roll!");
-                    continue;
-                    // Skip the rest of this turn after teleport
-                }
-
-                int roll1 = dice.roll();
-                int roll2 = dice.roll();
-                int steps = roll1 + roll2;
-                //2 dice logic
-                System.out.println("Steps before move: " + steps);
-
-                if (currentplayer.getCycleRestriction()) {
-                    if (steps >= 4) {
-                        steps = 0;
-                        System.out.println("Player " + currentplayer + " rolled " + steps + " — cycle restriction applied, moving 0");
-                    } else {
-                        System.out.println("Player " + currentplayer + " rolled " + steps + " — restriction removed, moving normally");
-                    }
-                    currentplayer.setCycleRestriction(false);
-                }
-                //move player if needed
-                int oldPosition = (currentplayer.getPosition() - steps + board.getSize()) % board.getSize();
-                //current pos before moving
-                currentplayer.move(steps, board.getSize());
-                //moves player by steps
-
-                //Reset teleport flag after moving
-                currentplayer.setJustTeleported(false);
-
-                System.out.println("Player " + currentplayer + " rolled " + steps + " and moved to square " + currentplayer.getPosition());
-                System.out.println("Balance: " + currentplayer.getBalance());
-                //To see exactly what happens after each round
-
-                if (currentplayer.getPosition() < oldPosition) {
-                    //checks if new pos is < than old pos
-                    addPassingHomeBonus(currentplayer, oldPosition);
-                    playerOnSquare(currentplayer, scanner);
-                }
+                handlePlayerTurn(currentplayer, scanner);
             }
+
             if (players.size() == 1) {
                 System.out.println("This is the end of the game." + "\n" + "There is only one player remaining");
                 break;
                 //exits the ronunds and stops the game
             }
         }
-        if (players.size() == 1) {
-            //this chack declares the winner
-            System.out.println("Congratulations " + players.get(0) + "\n" +
-                    "with total assets of £" + calculateAssets(players.get(0)) + "!");
-        } else {
-            Player winner = getWinner();
-            System.out.println("Congratulations " + winner + "\n" +
-                    "with total assets of £" + calculateAssets(winner) + "!");
+        declareWinner();
+        //call declareWinner method
+    }
+
+    /**
+     * Handles a single player's turn.
+     * Checks for cycle race, bankruptcy, station teleport
+     * Provides movement logic to rollAndMove() method
+     * @param currentplayer the player whose turn it is
+     * @param scanner the Scanner for user input
+     */
+    private void handlePlayerTurn(final Player currentplayer, final Scanner scanner) {
+        //Check if the player is on a cycle race square at the start of their turn
+        if (cycleRacePositions[currentplayer.getPosition()]) {
+            currentplayer.setCycleRestriction(true);
+        }
+        // Check bankruptcy at start of turn
+        if (currentplayer.getBalance() < 0) {
+            handleBankruptcy(currentplayer);
+        }
+        //skip turn if player was removed
+        if (!players.contains(currentplayer)) {
+            return;  // ← CHANGED from continue to return
+        }
+
+        //ADD STATION CHECK HERE — before the dice roll
+        if (board.getUndergroundStation(currentplayer.getPosition()) && !currentplayer.getJustTeleported()) {
+            System.out.println("Station detected — teleporting!");
+            currentplayer.setJustTeleported(true);
+            playerOnSquare(currentplayer, scanner);
+            System.out.println("Continue reached — skipping dice roll!");
+            return;  // ← CHANGED from continue to return
         }
     }
+
+    /**
+     * Rolls the dice, applies the cycle restrictions, moves the player and handles passing home.
+     * @param currentplayer the player whose tuurn it is
+     * @param scanner the scanner for user input
+     */
+    private void rollAndMove(final Player currentplayer, final Scanner scanner) {
+        int steps = calculateSteps(currentplayer);
+        currentplayer.move(steps, board.getSize());
+
+        System.out.println("Player " + currentplayer + " rolled " + steps
+                + " and moved to square " + currentplayer.getPosition()
+                + " Balance: " + currentplayer.getBalance());
+
+        int oldPosition = (currentplayer.getPosition() - steps + board.getSize()) % board.getSize();
+
+        if (currentplayer.getPosition() < oldPosition) {
+            addPassingHomeBonus(currentplayer, oldPosition);
+            playerOnSquare(currentplayer, scanner);
+        }
+    }
+
+    private int calculateSteps(final Player currentplayer) {
+        int roll1 = dice.roll();
+        int roll2 = dice.roll();
+        int steps = roll1 + roll2;
+
+        System.out.println("Steps before move: " + steps);
+
+        if (currentplayer.getCycleRestriction()) {
+            if (steps >= 4) {
+                steps = 0;
+                System.out.println("Player " + currentplayer + " rolled " + steps
+                        + " — cycle restriction applied, moving 0");
+            } else {
+                System.out.println("Player " + currentplayer + " rolled " + steps
+                        + " — restriction removed, moving normally");
+            }
+            currentplayer.setCycleRestriction(false);
+        }
+        return steps;
+    }
+
+    /**
+     * Declares the winner of the game.
+     * If only one player remains, they are the winner.
+     * Otherwise, the player with the highest assets wins.
+     */
+    private void declareWinner() {
+        if (players.size() == 1) {
+            System.out.println("Congratulations " + players.get(0) + "\n"
+                    + "with total assets of £" + calculateAssets(players.get(0)) + "!");
+        } else {
+            Player winner = getWinner();
+            System.out.println("Congratulations " + winner + "\n"
+                    + "with total assets of £" + calculateAssets(winner) + "!");
+        }
+    }
+
+
     /**
      * Calculate all the assets of the player.
      * Assests = balance + total purchase price of all owned properties.
@@ -240,10 +263,10 @@ public final class Game {
 
     /**
      * What to do with the square the player is standing on.
-     *
      * @param currentplayer the player whose turn it currently is
+     * @param scanner the scanner used for user input
      */
-    public void playerOnSquare(final Player currentplayer, Scanner scanner) {
+    public void playerOnSquare(final Player currentplayer, final Scanner scanner) {
         boolean movingForward = false;
         //declare movingForward variable
         //player's current pos to check for us for pass HOME check
@@ -270,73 +293,82 @@ public final class Game {
     }
 
     /**
-     * Handles everything when player is not on station square.
-     *
-     * @param currentplayer the player currently playing
+     * Handles actions when a player lands on a non station square.
+     * Decides whether the square is aProperty or CycleRace square.
+     * If it is a Property, delegates to either handlePropertyPurchase()
+     * or handleRentPayment() based on ownership.
+     * @param currentplayer the player who is curently playing
+     * @param scanner the scanner used for the user input
      */
-    private void handleNonStationSquare(final Player currentplayer, Scanner scanner) {
-        // Get the square the player is currently on
+    private void handleNonStationSquare(final Player currentplayer, final Scanner scanner) {
         Object square = board.getSquare(currentplayer.getPosition());
 
-        // Check if the square is a Property
         if (square instanceof Property property) {
-
-            boolean validInput = false;
-            boolean buyingProperty = false;
-
-            // Check if the property is unowned AND the player can afford it
             if (property.getPropertyOwner() == null && currentplayer.getBalance() >= property.getPropertyPurchasePrice()) {
-
-                while (!validInput) {
-                    // Ask the player if they want to buy the property
-                    System.out.print("Would you like to buy this property for £"
-                            + property.getPropertyPurchasePrice() + "? (yes/no): ");
-
-                    // Read the player's input (yes or no)
-                    String input = scanner.nextLine().trim().toLowerCase();
-
-                    if (input.equals("yes")) {
-                        buyingProperty = true;
-                        validInput = true;
-                    } else if (input.equals("no")) {
-                        buyingProperty = false;
-                        validInput = true;
-                    } else {
-                        System.out.println("Invalid input. Please enter 'yes' or 'no'.");
-                    }
-                }
-
-                // After valid input, decide what to do
-                if (buyingProperty) {
-                    // Deduct the purchase price from the player's balance
-                    currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyPurchasePrice());
-                    // Set the player as the property owner
-                    property.setPropertyOwner(currentplayer);
-                    // Confirm the purchase
-                    System.out.println(currentplayer + " bought " + property.getPropertyName());
-                } else {
-                    System.out.println(currentplayer + " chose not to buy " + property.getPropertyName());
-                }
-
-                //Rent for when the prperty owner is not the currentplayer
-            } else if (property.getPropertyOwner() != null && (property.getPropertyOwner() != currentplayer)) {
-                // Player pays rent to the owner
-                currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyRentalPrice());
-                // Check if the player goes bankrupt
-                handleBankruptcy(currentplayer);
-                // Add rent to the owner's balance
-                property.getPropertyOwner().setBalance(property.getPropertyOwner().getBalance() + property.getPropertyRentalPrice());
+                handlePropertyPurchase(currentplayer, property, scanner);
+            } else if (property.getPropertyOwner() != null && property.getPropertyOwner() != currentplayer) {
+                handleRentPayment(currentplayer, property, scanner);
             }
-
         } else if (cycleRacePositions[currentplayer.getPosition()]) {
-            // Set the player's cycle restriction for their next turn
             currentplayer.setCycleRestriction(true);
         }
     }
 
     /**
+     * Handles the purchase of a property.
+     * @param currentplayer the player buying the property
+     * @param property the property to buy
+     * @param scanner the Scanner for user input
+     */
+    private void handlePropertyPurchase(final Player currentplayer, final Property property, final Scanner scanner) {
+        boolean wantsToBuy = askToBuyProperty(property, scanner);
+
+        if (wantsToBuy) {
+            currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyPurchasePrice());
+            property.setPropertyOwner(currentplayer);
+            System.out.println(currentplayer + " bought " + property.getPropertyName());
+        } else {
+            System.out.println(currentplayer + " chose not to buy " + property.getPropertyName());
+        }
+    }
+
+    /**
+     * Asks the player if they want to buy property.
+     * @param property the property to buy
+     * @param scanner the scanner gor user input
+     * @return true if the player wants to buy but false ootherwise
+     */
+    private boolean askToBuyProperty (final Property property, final Scanner scanner){
+            while (true) {
+                System.out.print("Would you like to buy this property for £"
+                        + property.getPropertyPurchasePrice() + "? (yes/no): ");
+
+                String input = scanner.nextLine().trim().toLowerCase();
+
+                if (input.equals("yes")) {
+                    return true;
+                } else if (input.equals("no")) {
+                    return false;
+                } else {
+                    System.out.println("Invalid input. Please enter 'yes' or 'no'.");
+                }
+            }
+        }
+
+    /**
+     * Handles the payment of rent.
+     * @param currentplayer the player paying rent
+     * @param property the property they landed on
+     * @param scanner the Scanner for user input
+     */
+    private void handleRentPayment(final Player currentplayer, final Property property, final Scanner scanner) {
+        currentplayer.setBalance(currentplayer.getBalance() - property.getPropertyRentalPrice());
+        handleBankruptcy(currentplayer);
+        property.getPropertyOwner().setBalance(property.getPropertyOwner().getBalance() + property.getPropertyRentalPrice());
+    }
+
+    /**
      * Calculates the reward for passing Home and 1% of owned property.
-     *
      * @param currentplayer the player currently playing and passed Home
      * @return the total reward monopoly
      */
@@ -397,7 +429,7 @@ public final class Game {
      *
      * @param player the player to check
      */
-    public void forceBankruptcyCheck(Player player) {
+    public void forceBankruptcyCheck(final Player player) {
         handleBankruptcy(player);
     }
 

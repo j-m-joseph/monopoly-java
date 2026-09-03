@@ -1,10 +1,16 @@
-package com.cm6123.monopoly.app;
-import com.cm6123.monopoly.*;
-import com.cm6123.monopoly.dice.Dice;
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.UndergroundStation;
 import com.cm6123.monopoly.game.Welcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 public final class Application {
     /**
@@ -17,56 +23,21 @@ public final class Application {
     }
 
     /**
-     * main entry point.  If args provided, result is displayed and program exists. Otherwise, user is prompted for
+     * main entry point. If args provided, result is displayed and program exists. Otherwise, user is prompted for
      * input.
      *
      * @param args command line args.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int BoardSize = 0;
-        do {
-            System.out.print("Enter the size of your board (10 - 50): ");
-            try {
-                BoardSize = scanner.nextInt();
-                scanner.nextLine();
-                if (BoardSize < 10 || BoardSize > 50) {
-                    System.out.println("Number must be between 10 and 50. Try Again!");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("That wasn't a number!");
-                scanner.nextLine();
-                //clear invalid input
-            } catch (Exception all) {
-                System.out.println("Something went wrong!");
-                scanner.nextLine();
-            }
-        } while (BoardSize < 10 || BoardSize > 50);
-        System.out.println("Your board has " + BoardSize + " squares");
 
-        int NumOfPlayers = 0;
-        do {
-            System.out.print("Enter the number of players in this game (2 - 10): ");
-            try {
-                NumOfPlayers = scanner.nextInt();
-                scanner.nextLine();
-                if (NumOfPlayers < 2 || NumOfPlayers > 10) {
-                    System.out.println("Number must be between 2 and 10. Try Again!");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("That wasn't a number!");
-                scanner.nextLine();
-            } catch (Exception all) {
-                System.out.println("Something went wrong!");
-                scanner.nextLine();
-            }
-        } while (NumOfPlayers < 2 || NumOfPlayers > 10);
-        System.out.println("There are " + NumOfPlayers + " players in this game!");
+        //method calls
+        int boardSize = getBoardSize(scanner);
+        System.out.println("Your board has " + boardSize + " squares");
+        //shows the result to the user and checkstyle reasons means leave print in main
+        int numOfPlayers = getnumOfPlayers(scanner);
+        System.out.println("There are " + numOfPlayers + " players in this game!");
 
-        //creates a list of properties
-        List<Property> squares = new ArrayList<>(BoardSize);
-        //creates the lst that holds BoardSize propert items
-        //16 replaced with BoardSize because the size can change
 
         List<String> propertyList = new ArrayList<>();
         //create Property List
@@ -76,89 +47,21 @@ public final class Application {
             propertyList.add(name);
         }
 
-        List<Integer> usedPriceValues = new ArrayList<>();
-        //creates used price values list
-        for (int i = 0; i < BoardSize; i++) {
-            //creates BoardSize number of squares
-
-            //Controlled pricing randomness
-            int purchasePrice = 0;
-            int attempts = 0;
-            int maxAttempts = BoardSize;
-            //tries to depend on BoardSize
-
-            do {
-                if (i < BoardSize / 3) {
-                    //If the player lands on the first third of the board
-                    purchasePrice = 10 + random.nextInt(191);
-                    //The price will be between 10 and 200
-                } else if (i < 2 * (BoardSize / 3)) {
-                    // if the player lands on the second third of the board
-                    purchasePrice = 200 + random.nextInt(111);
-                    //The price will be between 200 and 310
-
-                } else {
-                    //Last third of the board do end with else
-                    purchasePrice = 310 + random.nextInt(191);
-                    //The price is between 310 and 500
-                }
-                purchasePrice = (purchasePrice / 10) * 10;
-                //rounded to the nearest 10th
-
-                attempts++;
-                //add to the attempt counter by 1
-                //The number of times I have tried to find a unique number
-
-            } while (usedPriceValues.contains(purchasePrice) && attempts < maxAttempts);
-            //the loop keeps running until it is a price that hasn't been used
-            //after propertial amount of tries loop stops
-            // it has run through all the possible numbers within the ranges
-
-            usedPriceValues.add(purchasePrice);
-            //once a new value is found added to the list of usedPriceValues
-
-            int rentalPrice = purchasePrice / 10;
-            //for simplicity rental price is always just exactly 10% of purchase price
-
-            if (random.nextDouble() < 0.10) {
-                squares.add(new Property("Road", 0, 0));
-            } else if (random.nextDouble() < 0.60) {
-                int index = random.nextInt(propertyList.size());
-                String name = propertyList.get(index);
-                propertyList.remove(index);
-                squares.add(new Property(name, purchasePrice, rentalPrice));
-            } else {
-                squares.add(new Property("Road", 0, 0));
-            }
-        }
+        List<Property> squares = getcreateBoard(boardSize, random, propertyList);
         //Board creation
         Board board = new Board(squares);
         //Board object var board filled with squares that are all properties
 
-        //Stations being added
-        int numOfUndergroundStations = BoardSize / 6;
-        //calculates the number of stations based on board size
-        if (numOfUndergroundStations < 2) {
-            numOfUndergroundStations = 2;
-        }
-        //ensures the board always has at least 2 stations
-        for (int j = 0; j < numOfUndergroundStations; j++) {
-            //index loop that runs numOfUndergroundStations times from 0
-            int stationPosition = 1 + j * (BoardSize / numOfUndergroundStations);
-            //j instead of i and calculation for station
+        List<Player> playerList = createPlayers(numOfPlayers);
+        //created playerList in main
+        //This returns something and does something
+        //If a method returns something, I store it.
+        //In this case in the playerList
 
-            //Make sure station position is valid
-            if (stationPosition >= BoardSize) {
-                stationPosition = BoardSize - 1;
-            }
-            // Make sure position 0 is NEVER a station
-            if (stationPosition == 0) {
-                stationPosition = 1;
-            }
-            UndergroundStation station = new UndergroundStation(stationPosition);
-            //new object
-            board.addUndergroundStation(station);
-        }
+        addStations(board, boardSize);
+        //This returns nothing but does something
+        runGame(board, playerList, args);
+        //calls runGame method and passes it through the paramaters
 
         // DEBUG CODE - TEMPORARY - TO BE REMOVE AFTER TESTING
 //        System.out.println("UNDERGROUND STATIONS");
@@ -167,20 +70,6 @@ public final class Application {
 //                System.out.println("Station at position: " + i);
 //            }
 //        }
-
-        //Plyaer creation
-        //Array list for PLayers
-        List<Player> playerList = new ArrayList<>();
-        //not a String but a Player object
-        //traditional/counting/index for loop
-        for (int i = 0; i < NumOfPlayers; i++) {
-            //create each player and loops through one by one
-            Player player = new Player();
-            //adding a Player object called player
-            String name = "Player " + (i + 1);
-            //default names for the plauers e.g., Player 1.  Plauer 2 etc...
-            playerList.add(player);
-        }
 
 //        //TO TEST THE RENT THEN IT WILL BE COMMENTED OUT
 //        Player player1 = playerList.get(0);
@@ -416,7 +305,7 @@ public final class Application {
 //        // Create game after stations are set
 //        Game stationGame = new Game(board, playerList);
 //
-//        // Get first player
+//        // Get the first player
 //        Player stationPlayer = playerList.get(0);
 //
 //        // Set player at position 2
@@ -465,22 +354,6 @@ public final class Application {
 //        System.out.println("Player balance after: " + combinedPlayer.getBalance());
 //        //End of test
 
-
-        //movement logic
-            Game game = new Game(board, playerList);
-            //game needs the board and players to start
-            //I need playerList because I need all the people playing
-
-            Welcome welcome = new Welcome();
-            // Print the welcome message to the console. The content comes from the game package.
-            System.out.println(welcome.welcomeMessage());
-            //puting this before the for loop to stop it repeating
-
-        // Find and display the winner
-        Player winner = game.getWinner();
-        int winnerAssets = game.calculateAssets(winner);
-        System.out.println("The winner is " + winner + " with total assets of £" + winnerAssets + "!");
-
 //            for (Player player : playerList) {
 //
 //                System.out.println("Before move: Player " + (playerList.indexOf(player) + 1) + " is on square " + player.getPosition());
@@ -494,11 +367,207 @@ public final class Application {
 //
 //                System.out.println("After move: Player " + (playerList.indexOf(player) + 1) + " is now on square " + player.getPosition());
 //                //after the player moves their stats
+    }
 
-            logger.info("Application Started with args:{}", String.join(",", args));
-            // Create a new instance of the Welcome class. This is an example of
-            // how the UI gives and takes information from the game.
-
-            logger.info("Application closing");
+    /**
+     * Prompts the user to enter the size of the board.
+     * Validates the input given it falls in the range of 10 and 50.
+     * @param scanner the Scanner used to read the user input
+     * @return the valid board size
+     */
+    private static int getBoardSize(final Scanner scanner) {
+        int boardSize = 0;
+        do {
+            System.out.print("Enter the size of your board (10 - 50): ");
+            try {
+                boardSize = scanner.nextInt();
+                scanner.nextLine();
+                if (boardSize < 10 || boardSize > 50) {
+                    System.out.println("Number must be between 10 and 50. Try Again!");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("That wasn't a number!");
+                scanner.nextLine();
+            } catch (Exception all) {
+                System.out.println("Something went wrong!");
+                scanner.nextLine();
             }
+        } while (boardSize < 10 || boardSize > 50);
+        return boardSize;
+    }
+
+    /**
+     * Prompts the user to enter a value for the number of players in the game.
+     * Validates the input given in falls in the range of 2 and 10.
+     * @param scanner is used to read the user's input
+     * @return the valid integer of players
+     */
+    public static int getnumOfPlayers(final Scanner scanner) {
+        int numOfPlayers = 0;
+        do {
+            System.out.print("Enter the number of players in this game (2 - 10): ");
+            try {
+                numOfPlayers = scanner.nextInt();
+                scanner.nextLine();
+                if (numOfPlayers < 2 || numOfPlayers > 10) {
+                    System.out.println("Number must be between 2 and 10. Try Again!");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("That wasn't a number!");
+                scanner.nextLine();
+            } catch (Exception all) {
+                System.out.println("Something went wrong!");
+                scanner.nextLine();
+            }
+        } while (numOfPlayers < 2 || numOfPlayers > 10);
+        return numOfPlayers;
+    }
+
+    /**
+     * Creates the board with properties based on the board size.
+     * Properties are randomly generated with prices based on their position.
+     * @param boardSize the number of squares on the board
+     * @param random the Random pbject used for generating prices
+     * @param propertyList the list of property names to assign
+     * @return the property object list to the board
+     */
+    public static List<Property> getcreateBoard(final int boardSize, final Random random, final List<String> propertyList) {
+        List<Property> squares = new ArrayList<>(boardSize);
+        List<Integer> usedPriceValues = new ArrayList<>();
+
+        //creates used price values list
+        for (int i = 0; i < boardSize; i++) {
+            //creates BoardSize number of squares
+            Property square = createSquare(i, boardSize, random, propertyList, usedPriceValues);
+            //Property var to store square
+            //calss createSquare method that creates one square
+            squares.add(square);
+            //adds square to the list
         }
+        return squares;
+    }
+
+    /**
+     * Generates a purchase price for a property based on its position on the board.
+     * Prices are higher towards the end of the board like real monopoly and prices are rounded to the nearest 10.
+     * @param i the position of the square on the board
+     * @param boardSize the total number of squares on the board
+     * @param random the Random object used the generate the price
+     * @return te generated purchase price
+     */
+    private static int generatePurchasePrice(final int i, final int boardSize, final Random random) {
+        //helper method so priivate
+        int purchasePrice = 0;
+        if (i < boardSize / 3) {
+            //If the player lands on the first third of the board
+            purchasePrice = 10 + random.nextInt(191);
+            //The price will be between 10 and 200
+        } else if (i < 2 * (boardSize / 3)) {
+            // if the player lands on the second third of the board
+            purchasePrice = 200 + random.nextInt(111);
+            //The price will be between 200 and 310
+
+        } else {
+            //Last third of the board do end with else
+            purchasePrice = 310 + random.nextInt(191);
+            //The price is between 310 and 500
+        }
+        purchasePrice = (purchasePrice / 10) * 10;
+        //rounded to the nearest 10th
+        //Controlled pricing randomness
+        return purchasePrice;
+    }
+
+    /**
+     * Creaes a single square for the board and decides if it is a road or property.
+     * If it's a property, it assigns a name from the propertyList.
+     * @param i the position of the square on the board
+     * @param boardSize the total number of squares on the board
+     * @param random the Random object used to generate prices
+     * @param propertyList the list of property names to assign
+     * @param usedPriceValues the lis of prices already used to avoid unessarry duplication
+     * @return the property Object representing the square
+     */
+    private static Property createSquare(final int i, final int boardSize, final Random random, final List<String> propertyList, final List<Integer> usedPriceValues) {
+        int purchasePrice = generatePurchasePrice(i, boardSize, random);
+        //calls helper method to get a price based on position
+        int rentalPrice = purchasePrice / 10;
+
+        if (random.nextDouble() < 0.10) {
+            return new Property("Road", 0, 0);
+        } else if (random.nextDouble() < 0.60) {
+            int index = random.nextInt(propertyList.size());
+            String name = propertyList.get(index);
+            propertyList.remove(index);
+            return new Property(name, purchasePrice, rentalPrice);
+        } else {
+            return new Property("Road", 0, 0);
+        }
+    }
+
+    /**
+     * Creates a list of players based on the given number.
+     * @param numOfPlayers the number of players to create
+     * @return the list of player objects
+     */
+    private static List<Player> createPlayers(final int numOfPlayers) {
+        List<Player> playerList = new ArrayList<>();
+        for (int i = 0; i < numOfPlayers; i++) {
+            Player player = new Player();
+            playerList.add(player);
+        }
+        return playerList;
+    }
+
+    /**
+     * Creates a list of stations based on the size of the board.
+     * Ensures the number of stations abides by the minimum requirements of the pro forma and is reasonable.
+     * @param board the board abjuect with all squares
+     * @param boardSize the size of the board
+     */
+    private static void addStations(final Board board, final int boardSize) {
+        int numOfUndergroundStations = boardSize / 6;
+        if (numOfUndergroundStations < 2) {
+            numOfUndergroundStations = 2;
+        }
+        for (int j = 0; j < numOfUndergroundStations; j++) {
+            int stationPosition = 1 + j * (boardSize / numOfUndergroundStations);
+            if (stationPosition >= boardSize) {
+                stationPosition = boardSize - 1;
+            }
+            if (stationPosition == 0) {
+                stationPosition = 1;
+            }
+            UndergroundStation station = new UndergroundStation(stationPosition);
+            board.addUndergroundStation(station);
+        }
+    }
+
+    /**
+     * The game runs using the given board and players.
+     * Displays the welcome message, plays rounds and declares the winner.
+     * @param board the board object with all squares
+     * @param playerList the list of players in the game
+     * @param args the command line arguments passed to the application
+     */
+    public static void runGame(final Board board, final List<Player> playerList, final String[] args) {
+
+        //movement logic
+        Game game = new Game(board, playerList);
+        //game needs the board and players to start
+        //I need playerList because I need all the people playing
+
+        Welcome welcome = new Welcome();
+        // Print the welcome message to the console. The content comes from the game package.
+        System.out.println(welcome.welcomeMessage());
+        //puting this before the for loop to stop it repeating
+
+        // Find and display the winner
+        Player winner = game.getWinner();
+        int winnerAssets = game.calculateAssets(winner);
+        System.out.println("The winner is " + winner + " with total assets of £" + winnerAssets + "!");
+
+        logger.info("Application Started with args:{}", String.join(",", args));
+        logger.info("Application closing");
+    }
+}

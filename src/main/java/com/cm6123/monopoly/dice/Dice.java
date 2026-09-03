@@ -43,7 +43,7 @@ public class Dice {
   }
 
   /**
-   * Clears the forced roll value
+   * Clears the forced roll value.
    * Allows the dice to return to ramdom rolls
    */
   public void clearForcedRoll() {
@@ -62,7 +62,7 @@ public class Dice {
    * Only works if test mode is enabled.
    * @param total the value to force
    */
-  public void forceNextRoll(int total) {
+  public void forceNextRoll(final int total) {
     this.forcedRoll = total;
   }
 
