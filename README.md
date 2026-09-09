@@ -21,3 +21,13 @@ For Powershell, there is ```build.ps1``` which you can run with ```.\build.ps1``
 For Git Bash, there is ```build.sh``` which you can run with ```./build.sh```.
 
 Both of these scripts will run the Gradle task ```buildAndReport```. which is the same as what will be run on Gitlab CI.
+
+# Personal Refactor Notes (Jacqulin)
+
+This is a rewrite of my 1st year monopoly project. I rebuilt it with enhancements to have a project that is up to a higher standard to strengthen my Java fundamentals and OOP design before starting 2nd year. 
+
+How to run
+`gradlew run`
+How to test
+`gradlew test`
+
