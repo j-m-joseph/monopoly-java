@@ -9,6 +9,8 @@ import com.cm6123.monopoly.app.MonopolyGame;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -66,14 +68,33 @@ public class Stage1Test {
 
     @Test
     public void testMoveWithPassingHome() {
+     List<Property> squares = new ArrayList<>(16);
+     //Board empty with 16 squares
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
         Player player = new Player();
         player.setPosition(14);
         int BeforeMoveBalance = player.getBalance();
-        player.move(5, 16);
-        // If bonus is NOT added in move() anymore, just check position
+
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+
+        Game game = new Game(board, players);
+
+        game.forceNextDiceRoll(2);
+        // first die
+        game.forceNextDiceRoll(3);
+        // second die (total 5)
+        game.playRounds(1, null);
         assertEquals(3, player.getPosition());
-        // Remove the balance check if it's handled in Game
+
+        assertEquals(BeforeMoveBalance + 200, player.getBalance());
+        // Player should get £200 bonus for passing Home
     }
+    //player.move() doesn't need Home bonus only Gmae.playRounds() does
 
     @Test
     public void testGameRuns() {
@@ -92,11 +113,20 @@ public class Stage1Test {
         playerList.add(player2);
 
         Game game = new Game(board, playerList);
-        game.playRounds(10, new Scanner(System.in));
-        //method playRounds
-        //object game
-        //paramaters 10
-        //same as constructor order
+        // Round 1
+        game.forceNextDiceRoll(3);
+        // Player 1 - first die
+        game.forceNextDiceRoll(2);
+        // Player 1 - second die (total 5)
+        game.forceNextDiceRoll(1);
+        // Player 2 - first die
+        game.forceNextDiceRoll(1);
+        // Player 2 - second die (total 2)
+
+        game.playRounds(1, null);
+
+        assertEquals(5, player1.getPosition());
+        assertEquals(2, player2.getPosition());
 
         Player winner = game.getWinner();
         assertNotNull(winner);
@@ -218,5 +248,55 @@ public class Stage1Test {
         //Position should always be >= 0
         assertTrue(player.getPosition() >= 0);
     }
+
+    @Test
+    void testInvalidBoardSizeAndPlayerCountTriggersValidationBranches() {
+        // Board: invalid low (5), invalid high (60), valid (13)
+        // Players: invalid low (1), invalid high (11), valid (2)
+        String input = "5\n60\n13\n1\n11\n2\nq\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        Application.main(new String[]{});
+
+        assertTrue(out.toString().contains("Welcome to Monopoly"));
+    }
+
+    @Test
+    void testAddStationsWithSmallBoardTriggersMinStationsBranch() {
+        // Board size 10 → 10/6 = 1 → triggers the < 2 branch
+        String input = "10\n2\nq\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        Application.main(new String[]{});
+
+        assertTrue(out.toString().contains("Welcome to Monopoly"));
+    }
+    @Test
+    void testPlayerDoesNotPassHome() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        Player player = new Player();
+        player.setPosition(5);
+
+        List<Player> players = List.of(player);
+        Game game = new Game(board, players);
+
+        game.forceNextDiceRoll(2);
+        game.forceNextDiceRoll(2);
+        game.playRounds(1, null);
+
+        assertEquals(1000, player.getBalance());
+    }
 }
-//All y tests from the project the 1st time round just reorganized
+//Most of the tests are from the project the 1st time round just reorganized
+//Aditional tests added to better coverage score

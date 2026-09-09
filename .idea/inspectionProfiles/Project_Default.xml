@@ -661,7 +661,7 @@
     <inspection_tool class="ExtendsObject" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExternalizableWithoutPublicNoArgConstructor" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ExtractMethodRecommender" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="minLength" value="603" />
+      <option name="minLength" value="701" />
       <option name="maxParameters" value="1" />
     </inspection_tool>
     <inspection_tool class="FacesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
