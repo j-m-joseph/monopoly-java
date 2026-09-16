@@ -1,5 +1,7 @@
 package com.cm6123.monopoly;
 
+import java.util.Scanner;
+
 /**
  * purchase property in Carl Monopoly.
  * inheritance requirement
@@ -33,6 +35,7 @@ public final class Property extends Square implements Purchasable {
      */
     public Property(final String name, final int purchasePrice, final int rentalPrice) {
 
+        super(name);
         this.propertyName = name;
         this.propertyPurchasePrice = purchasePrice;
         this.propertyRentalPrice = rentalPrice;
@@ -79,5 +82,18 @@ public final class Property extends Square implements Purchasable {
     public void setPropertyOwner(final Player newPropertyOwner) {
         this.propertyOwner = newPropertyOwner;
         //added paramater Player newPropertyOwner
+    }
+
+    /**
+     * Called when a player lands ona  property.
+     * Allows the Game to handle purchase or rent.
+     * @param game the current game
+     * @param player the player who landed on this square
+     * @param scanner the scanner used for user input
+     */
+    @Override
+    public void whenLand(final Game game, final Player player, final Scanner scanner) {
+        game.handlePropertyLanding(player, this, scanner);
+        //handle details for this property
     }
 }

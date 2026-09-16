@@ -180,8 +180,9 @@ public final class Game {
 
     /**
      * Rolls the dice, applies the cycle restrictions, moves the player and handles passing home.
+     *
      * @param currentplayer the player whose tuurn it is
-     * @param scanner the scanner for user input
+     * @param scanner       the scanner for user input
      */
     private void rollAndMove(final Player currentplayer, final Scanner scanner) {
         int oldPosition = currentplayer.getPosition();
@@ -293,11 +294,38 @@ public final class Game {
         propertyManager.handleNonStationSquare(currentplayer, scanner);
     }
 
-        /**
-         * FOR TESTING ONLY — forces a bankruptcy check on a player.
-         * @param player the player to check
-         */
+    /**
+     * FOR TESTING ONLY — forces a bankruptcy check on a player.
+     * @param player the player to check
+     */
     public void forceBankruptcyCheck(final Player player) {
         bankruptcyManager.forceBankruptcyCheck(player);
+    }
+
+    /**
+     * Handles what happens when a player lands on a property.
+     * Gives o propertyManager to handle.
+     * @param player the player who landed
+     * @param property the property they landed on
+     * @param scanner the scanner used for user input
+     */
+    public void handlePropertyLanding(final Player player, final Property property, final Scanner scanner) {
+        propertyManager.handleNonStationSquare(player, scanner);
+    }
+
+    /**
+     * Handles what happens when a plauer lands on an underground station.
+     * Moves the player to another station
+     * @param player the player who landed
+     */
+    public void handleStationLanding(final Player player) {
+        int currentPosition = player.getPosition();
+        int newPosition = board.getOtherStation(currentPosition);
+        player.setPosition(newPosition);
+
+        if (newPosition < currentPosition) {
+            int reward = movementManager.getReward(player);
+            player.setBalance(player.getBalance() + reward);
+        }
     }
 }

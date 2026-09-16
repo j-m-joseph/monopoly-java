@@ -8,10 +8,10 @@ import java.util.Random;
 public final class Board {
 
     /**
-     * Field that can hold 16 items.
-     * Squares is the name of the field.
+     * List of squares on the board.
+     * Each square is a Road, Property or UndergroundStation.
      */
-    private final List<Property> squares;
+    private final List<Square> squares;
 
     /**
      * Field that holds underground stations.
@@ -26,21 +26,19 @@ public final class Board {
 
     /**
      * Constructs a new board with a given list of squares.
-     * @param squareList list of 16 squares null for roads
-     * Initialize undergroundStations list as new ArrayList<>.
-     * Empty list for stations to be added.
+     * @param squareList list of squares on the board
      */
-    public Board(final List<Property> squareList) {
+    public Board(final List<Square> squareList) {
         this.squares = squareList;
         undergroundStations = new ArrayList<>();
     }
 
     /**
      * Returns square at given position.
-     * @param position the 0 index
-     * @return the property position
+     * @param position the index of the square
+     * @return the square at the position
      */
-    public Object getSquare(final int position) {
+    public Square getSquare(final int position) {
         return squares.get(position);
     }
 

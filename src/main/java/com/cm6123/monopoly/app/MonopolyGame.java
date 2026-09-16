@@ -1,10 +1,6 @@
 package com.cm6123.monopoly.app;
 
-import com.cm6123.monopoly.Board;
-import com.cm6123.monopoly.Game;
-import com.cm6123.monopoly.Player;
-import com.cm6123.monopoly.Property;
-import com.cm6123.monopoly.UndergroundStation;
+import com.cm6123.monopoly.*;
 import com.cm6123.monopoly.game.Welcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,20 +79,19 @@ public final class MonopolyGame {
     /**
      * Creates the board with properties based on the board size.
      * Properties are randomly generated with prices based on their position.
-     *
      * @param boardSize    the number of squares on the board
      * @param random       the Random pbject used for generating prices
      * @param propertyList the list of property names to assign
      * @return the property object list to the board
      */
-    public static List<Property> getcreateBoard(final int boardSize, final Random random, final List<String> propertyList) {
-        List<Property> squares = new ArrayList<>(boardSize);
+    public static List<Square> getcreateBoard(final int boardSize, final Random random, final List<String> propertyList) {
+        List<Square> squares = new ArrayList<>(boardSize);
         List<Integer> usedPriceValues = new ArrayList<>();
 
         //creates used price values list
         for (int i = 0; i < boardSize; i++) {
             //creates BoardSize number of squares
-            Property square = createSquare(i, boardSize, random, propertyList, usedPriceValues);
+            Square square = createSquare(i, boardSize, random, propertyList, usedPriceValues);
             //Property var to store square
             //calss createSquare method that creates one square
             squares.add(square);
@@ -108,7 +103,6 @@ public final class MonopolyGame {
     /**
      * Generates a purchase price for a property based on its position on the board.
      * Prices are higher towards the end of the board like real monopoly and prices are rounded to the nearest 10.
-     *
      * @param i         the position of the square on the board
      * @param boardSize the total number of squares on the board
      * @param random    the Random object used the generate the price
@@ -147,20 +141,20 @@ public final class MonopolyGame {
      * @param usedPriceValues the lis of prices already used to avoid unessarry duplication
      * @return the property Object representing the square
      */
-    private static Property createSquare(final int i, final int boardSize, final Random random, final List<String> propertyList, final List<Integer> usedPriceValues) {
+    private static Square createSquare(final int i, final int boardSize, final Random random, final List<String> propertyList, final List<Integer> usedPriceValues) {
         int purchasePrice = generatePurchasePrice(i, boardSize, random);
         //calls helper method to get a price based on position
         int rentalPrice = purchasePrice / 10;
 
         if (random.nextDouble() < 0.10) {
-            return new Property("Road", 0, 0);
+            return new Road("Road");
         } else if (random.nextDouble() < 0.60) {
             int index = random.nextInt(propertyList.size());
             String name = propertyList.get(index);
             propertyList.remove(index);
             return new Property(name, purchasePrice, rentalPrice);
         } else {
-            return new Property("Road", 0, 0);
+            return new Road("Road");
         }
     }
 
@@ -246,7 +240,7 @@ public final class MonopolyGame {
             propertyList.add(name);
         }
 
-        List<Property> squares = getcreateBoard(boardSize, random, propertyList);
+        List<Square> squares = getcreateBoard(boardSize, random, propertyList);
         Board board = new Board(squares);
         List<Player> playerList = createPlayers(numOfPlayers);
         addStations(board, boardSize);

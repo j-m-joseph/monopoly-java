@@ -1,0 +1,1283 @@
+package com.cm6123.monopoly.s1_navigation;
+
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.app.Application;
+import com.cm6123.monopoly.app.MonopolyGame;
+import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class Stage1Test {
+
+    @Test
+    public void testInitialBalance() {
+        Player player = new Player();
+        assertEquals(1000, player.getBalance());
+        //Test Method for testInitialBalance
+        //Creates new Player object
+        //Balance is set to 1000
+    }
+
+    @Test
+    public void testInitialPosition() {
+        Player player = new Player();
+        assertEquals(0, player.getPosition());
+        //Test for testInitialPosition
+        //Creates new Player object
+        //position initially is 0
+    }
+
+    @Test
+    public void testSetBalance() {
+        Player player = new Player();
+        player.setBalance(3000);
+        assertEquals(3000, player.getBalance());
+    }
+
+    @Test
+    public void testSetPosition() {
+        Player player = new Player();
+        player.setPosition(6);
+        assertEquals(6, player.getPosition());
+        //changes the position
+        //checks if the position changed correctly
+    }
+
+    @Test
+    public void testMoveWithoutPassingHome() {
+        Player player = new Player();
+        player.setPosition(5);
+        int BeforeMoveBalance = player.getBalance();
+        player.move(3, 16);
+        assertEquals(BeforeMoveBalance, player.getBalance());
+        assertEquals(8, player.getPosition());
+        //Set position to 5 + 3 steps will move to 8
+        //no wrap
+        // store balance before move and balance is unchanged
+    }
+
+    @Test
+    public void testMoveWithPassingHome() {
+     List<Property> squares = new ArrayList<>(16);
+     //Board empty with 16 squares
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        Player player = new Player();
+        player.setPosition(14);
+        int BeforeMoveBalance = player.getBalance();
+
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+
+        Game game = new Game(board, players);
+
+        game.forceNextDiceRoll(2);
+        // first die
+        game.forceNextDiceRoll(3);
+        // second die (total 5)
+        game.playRounds(1, null);
+        assertEquals(3, player.getPosition());
+
+        assertEquals(BeforeMoveBalance + 200, player.getBalance());
+        // Player should get £200 bonus for passing Home
+    }
+    //player.move() doesn't need Home bonus only Gmae.playRounds() does
+
+    @Test
+    public void testGameRuns() {
+        //Create a board with 16 empty squares (null properties)
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        Player player1 = new Player();
+        Player player2 = new Player();
+        //Creates 2 new players
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player1);
+        playerList.add(player2);
+
+        Game game = new Game(board, playerList);
+        // Round 1
+        game.forceNextDiceRoll(3);
+        // Player 1 - first die
+        game.forceNextDiceRoll(2);
+        // Player 1 - second die (total 5)
+        game.forceNextDiceRoll(1);
+        // Player 2 - first die
+        game.forceNextDiceRoll(1);
+        // Player 2 - second die (total 2)
+
+        game.playRounds(1, null);
+
+        assertEquals(5, player1.getPosition());
+        assertEquals(2, player2.getPosition());
+
+        Player winner = game.getWinner();
+        assertNotNull(winner);
+    }
+
+    @Test
+    public void testMonopolyGameRuns() {
+        String input = "13\n2\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        MonopolyGame game = new MonopolyGame();
+        game.start(new String[]{});
+        //Tests that MonopolyGame starts and runs without crashing
+        //Uses board size 13 and 2 players as input
+    }
+
+    @Test
+    public void testApplicationMainStarts() {
+        String input = "13\n2\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        Application.main(new String[]{});
+        //Tests that Application.main starts without crashing
+    }
+
+    @Test
+    public void testPlayerMovesToEndOfBoard() {
+        //Create a board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+
+        //Set player at position 14 (near the end)
+        player.setPosition(14);
+        player.move(5, board.getSize());
+        //14 + 5 = 19, wraps to 3
+        assertEquals(3, player.getPosition());
+        //Checks that player wraps around correctly
+    }
+
+    @Test
+    public void testPlayerMovesExactBoardSize() {
+        //Create a board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+
+        //Set player at position 0
+        player.setPosition(0);
+        player.move(16, board.getSize());
+        //0 + 16 = 16, wraps to 0
+        assertEquals(0, player.getPosition());
+        //Checks that moving exactly board size lands on same position
+    }
+
+    @Test
+    public void testPlayerMovesFromHome() {
+        //Create a board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+
+        //Player starts at position 0 (Home)
+        assertEquals(0, player.getPosition());
+        //Move 3 steps
+        player.move(3, board.getSize());
+        assertEquals(3, player.getPosition());
+        //Checks that player moves correctly from starting position
+    }
+
+    @Test
+    public void testMultiplePlayersMove() {
+        //Create a board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        //Create 3 players
+        Player player1 = new Player();
+        Player player2 = new Player();
+        Player player3 = new Player();
+
+        //Move each player different amounts
+        player1.move(3, board.getSize());
+        assertEquals(3, player1.getPosition());
+
+        player2.move(7, board.getSize());
+        assertEquals(7, player2.getPosition());
+
+        player3.move(12, board.getSize());
+        assertEquals(12, player3.getPosition());
+        //Checks that multiple players can move independently
+    }
+
+    @Test
+    public void testPlayerCannotGoNegative() {
+        //Create a board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+
+        //Player at position 0
+        player.setPosition(0);
+        //In Monopoly, you can't move backwards, so this just tests normal movement
+        player.move(5, board.getSize());
+        assertEquals(5, player.getPosition());
+        //Position should always be >= 0
+        assertTrue(player.getPosition() >= 0);
+    }
+
+    @Test
+    void testInvalidBoardSizeAndPlayerCountTriggersValidationBranches() {
+        // Board: invalid low (5), invalid high (60), valid (13)
+        // Players: invalid low (1), invalid high (11), valid (2)
+        String input = "5\n60\n13\n1\n11\n2\nq\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        Application.main(new String[]{});
+
+        assertTrue(out.toString().contains("Welcome to Monopoly"));
+    }
+
+    @Test
+    void testAddStationsWithSmallBoardTriggersMinStationsBranch() {
+        // Board size 10 → 10/6 = 1 → triggers the < 2 branch
+        String input = "10\n2\nq\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        Application.main(new String[]{});
+
+        assertTrue(out.toString().contains("Welcome to Monopoly"));
+    }
+    @Test
+    void testPlayerDoesNotPassHome() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        Player player = new Player();
+        player.setPosition(5);
+
+        List<Player> players = List.of(player);
+        Game game = new Game(board, players);
+
+        game.forceNextDiceRoll(2);
+        game.forceNextDiceRoll(2);
+        game.playRounds(1, null);
+
+        assertEquals(1000, player.getBalance());
+    }
+}
+//Most of the tests are from the project the 1st time round just reorganized
+//Aditional tests added to better coverage scorepackage s2_purchase;
+
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Game;
+import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+public class Stage2Test {
+    @Test
+    public void testPropertyPurchase() {
+        List<Property> squares = new ArrayList<>();
+        squares.add(new Property("Armagh Road", 20, 3));
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+        player.setBalance(1000);
+        player.setPosition(0);
+
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player);
+        Game game = new Game(board, playerList);
+
+        Scanner testScanner = new Scanner("yes");
+        game.playerOnSquare(player, testScanner);
+        assertEquals(980, player.getBalance());
+        assertSame(player, squares.get(0).getPropertyOwner());
+    }
+    @Test
+    public void testCannotAffordProperty() {
+        //creates a board with a property
+        List<Property> squares = new ArrayList<>();
+        squares.add(new Property("Test street", 2000, 100));
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        //creates a new board objexct with squares list I already made
+
+        //Player doesn't have enough money
+        Player player = new Player();
+        player.setBalance(1000);
+        player.setPosition(0);
+
+        List<Player> playerList = new ArrayList<>();
+        //empty list that holds player objects
+        playerList.add(player);
+        Game game = new Game(board, playerList);
+        //creates a new game object giving it a board and the list of players
+
+        //Tries to buy property but saying yes bit should fail due to insufficient funds
+        Scanner testScanner = new Scanner("yes");
+        game.playerOnSquare(player, testScanner);
+
+        // Balance should stay 1000 (unchanged) because couldn't afford it
+        assertEquals(1000, player.getBalance());
+        // Property should have no owner
+        assertEquals(null, squares.get(0).getPropertyOwner());
+    }
+
+    @Test
+    public void testAlreadyOwnedProperty() {
+        // Create board with property
+        List<Property> squares = new ArrayList<>();
+        squares.add(new Property("Test Street", 50, 5));
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        // Player 1 owns the property
+        Player player1 = new Player();
+        player1.setBalance(1000);
+        squares.get(0).setPropertyOwner(player1);
+
+        // Player 2 tries to buy it
+        Player player2 = new Player();
+        player2.setBalance(1000);
+        player2.setPosition(0);
+
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player1);
+        playerList.add(player2);
+        Game game = new Game(board, playerList);
+
+        // Player 2 tries to buy already-owned property
+        Scanner testScanner = new Scanner("yes");
+        game.playerOnSquare(player2, testScanner);
+
+        // Player 2's balance should NOT change
+        assertEquals(995, player2.getBalance());
+        // Player 1 should still own it
+        assertSame(player1, squares.get(0).getPropertyOwner());
+    }
+
+    @Test
+    public void testDeclinePurchase() {
+        // Create board with property
+        List<Property> squares = new ArrayList<>();
+        squares.add(new Property("Test Street", 50, 5));
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        Player player = new Player();
+        player.setBalance(1000);
+        player.setPosition(0);
+
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player);
+        Game game = new Game(board, playerList);
+
+        // Player says "no" to buying
+        Scanner testScanner = new Scanner("no");
+        game.playerOnSquare(player, testScanner);
+
+        // Balance should NOT change
+        assertEquals(1000, player.getBalance());
+        // Property should have no owner
+        assertEquals(null, squares.get(0).getPropertyOwner());
+    }
+}
+//previous attempt but modifiedpackage s3_rental;
+
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
+public class Stage3Test {
+    @Test
+    public void testPropertyRentalTransfers() {
+
+        Property Coraline = new Property("Coraline Road", 100, 10);
+        List<Property> squares = new ArrayList<>();
+        squares.add(Coraline);
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player playerA = new Player();
+        playerA.setBalance(1000);
+        Coraline.setPropertyOwner(playerA);
+
+        Player playerB = new Player();
+        playerB.setBalance(1000);
+        playerB.setPosition(0);
+        playerB.setPosition(0);
+        Game game1 = new Game(board, List.of(playerA, playerB));
+        game1.playerOnSquare(playerB, null);
+        assertEquals(1010, playerA.getBalance());
+        assertEquals(990, playerB.getBalance());
+    }
+
+    @Test
+    public void testLandOnOwnProperty() {
+        // Create property
+        Property property = new Property("My Street", 100, 10);
+        List<Property> squares = new ArrayList<>();
+        squares.add(property);
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        // Player owns the property
+        Player player = new Player();
+        player.setBalance(1000);
+        player.setPosition(0);
+        property.setPropertyOwner(player);
+
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(player);
+        Game game = new Game(board, playerList);
+
+        // Player lands on their own property
+        game.playerOnSquare(player, null);
+
+        // Balance should not change (player doesn't pay rent to themselves)
+        assertEquals(1000, player.getBalance());
+    }
+
+    @Test
+    public void testNotEnoughMoneyForRent() {
+        // Create expensive property
+        Property property = new Property("Test Street", 100, 500);
+        List<Property> squares = new ArrayList<>();
+        squares.add(property);
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        // Player A owns the property
+        Player playerA = new Player();
+        playerA.setBalance(1000);
+        property.setPropertyOwner(playerA);
+
+        // Player B doesn't have enough money for rent
+        Player playerB = new Player();
+        playerB.setBalance(100);
+        playerB.setPosition(0);
+
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(playerA);
+        playerList.add(playerB);
+        Game game = new Game(board, playerList);
+
+        // Player B lands on property, can't afford rent
+        game.playerOnSquare(playerB, null);
+
+        // Player B should go bankrupt (balance becomes negative or 0)
+        assertTrue(playerB.getBalance() < 100);
+    }
+    @Test
+    public void testAccurateRentalAmount() {
+        //creates property with details
+        Property property = new Property("Test Street", 100, 25);
+        List<Property> squares = new ArrayList<>();
+        squares.add(property);
+        for (int i = 0; i < 15; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        // Player A owns the property
+        Player playerA = new Player();
+        playerA.setBalance(1000);
+        property.setPropertyOwner(playerA);
+
+        // Player B lands on it
+        Player playerB = new Player();
+        playerB.setBalance(1000);
+        playerB.setPosition(0);
+
+        List<Player> playerList = new ArrayList<>();
+        playerList.add(playerA);
+        playerList.add(playerB);
+        Game game = new Game(board, playerList);
+
+        int beforeA = playerA.getBalance();
+        int beforeB = playerB.getBalance();
+
+        game.playerOnSquare(playerB, null);
+
+        //playerA should get 25 (rental amount)
+        assertEquals(beforeA + 25, playerA.getBalance());
+
+        //playerB should lose 25 (gives to playerA)
+        assertEquals(beforeB - 25, playerB.getBalance());
+
+    }
+}
+package s4_bankruptcy;
+
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class Stage4Test {
+    @Test
+    public void testplayerBankruptcyRecovery() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Property player1Property = new Property("Hobbit road", 200, 10);
+        Property player2Property = new Property("Waverly road", 500, 50);
+        squares.set(10, player1Property);
+        squares.set(14, player2Property);
+        Board board = new Board(squares);
+        Player player1 = new Player();
+        player1.setBalance(40);
+        player1Property.setPropertyOwner(player1);
+
+        Player player2 = new Player();
+        player2.setBalance(1000);
+        player2Property.setPropertyOwner(player2);
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+        Game game = new Game(board, players);
+        // add the players and set the respective balances
+        player1.setPosition(10);
+        player1.move(4, board.getSize());
+        //player 1 moves to player 2's property
+        game.playerOnSquare(player1, null);
+        //rent and bankruptcy
+        assertEquals(90, player1.getBalance());
+        assertEquals(1050, player2.getBalance());
+        assertNull(player1Property.getPropertyOwner());
+    }
+
+    @Test
+    public void testBankruptcyWithZeroBalance() {
+        // Create board with property
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Property property = new Property("Test road", 200, 10);
+        squares.set(3, property);
+
+        Board board = new Board(squares);
+
+        // Player A owns the property
+        Player playerA = new Player();
+        playerA.setBalance(1000);
+        property.setPropertyOwner(playerA);
+
+        // Player B has £0 balance
+        Player playerB = new Player();
+        playerB.setBalance(0);
+        playerB.setPosition(3);
+
+        List<Player> players = new ArrayList<>();
+        players.add(playerA);
+        players.add(playerB);
+        Game game = new Game(board, players);
+
+        // Player B lands on property, must pay rent but has £0
+        game.playerOnSquare(playerB, null);
+        // Player B should go bankrupt (balance should be 0 or negative)
+        //player B should lose their property to cover the missing rent
+        assertEquals(playerA, property.getPropertyOwner());
+        //check if player A srtill owns the property
+    }
+
+    @Test
+    public void testBankruptcyRemovesPlayer() {
+        // Create board with property
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Property property = new Property("Test Street", 100, 500);
+        squares.set(3, property);
+        Board board = new Board(squares);
+
+        // Player A owns the property
+        Player playerA = new Player();
+        playerA.setBalance(1000);
+        property.setPropertyOwner(playerA);
+
+        // Player B has not enough money
+        Player playerB = new Player();
+        playerB.setBalance(100);
+        playerB.setPosition(3);
+
+        //Adding a playerC
+        Player playerC = new Player();
+        playerC.setBalance(1000);
+
+        List<Player> players = new ArrayList<>();
+        players.add(playerA);
+        players.add(playerB);
+        List<Player> player = new ArrayList<>();
+        player.add(playerA);
+        player.add(playerB);
+        player.add(playerC);
+        Game game = new Game(board, player);
+
+        // Player B goes bankrupt
+        game.playerOnSquare(playerB, null);
+
+        // Player B should have negative or zero balance
+        assertTrue(playerB.getBalance() <= 0);
+
+        // Player B should not be the winner
+        Player winner = game.getWinner();
+        assertNotEquals(playerB, winner);
+    }
+
+    @Test
+    public void testBankruptcySellsProperties() {
+        // Create board with properties
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Property property1 = new Property("Property 1", 200, 10);
+        Property property2 = new Property("Property 2", 300, 20);
+        squares.set(2, property1);
+        squares.set(5, property2);
+
+        Board board = new Board(squares);
+
+        // Player owns both properties
+        Player player = new Player();
+        player.setBalance(50);
+        property1.setPropertyOwner(player);
+        property2.setPropertyOwner(player);
+
+        // Player A owns expensive property (rent is £100)
+        Property testStreet = new Property("Test Street", 100, 100);
+        squares.set(8, testStreet);
+        Player playerA = new Player();
+        playerA.setBalance(1000);
+        testStreet.setPropertyOwner(playerA);
+
+        player.setPosition(8);
+
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+        players.add(playerA);
+        Game game = new Game(board, players);
+
+        // Player lands on Test Street, can't afford rent
+        // Should sell properties to pay rent
+        game.playerOnSquare(player, null);
+
+        // Check property1 was sold
+        assertNull(property1.getPropertyOwner());
+
+        // Check property2 is still owned by player
+        assertEquals(player, property2.getPropertyOwner());
+
+        // Check player has correct balance
+        assertEquals(50, player.getBalance());
+        // -50 + 100 = 50
+    }
+
+    @Test
+    void testPassHomeWithPropertiesAndBonus() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            squares.add(null);
+            // Board with only one property at position 5, rest null
+
+        }
+        Property prop = new Property("Square 5", 150, 15);
+        squares.set(5, prop);
+        Board board = new Board(squares);
+
+        Player player = new Player();
+        player.setPosition(8);
+        // Near the end
+
+        prop.setPropertyOwner(player);
+        // Player owns the property at position 5
+
+        int initialBalance = player.getBalance();
+
+        List<Player> players = List.of(player);
+        Game game = new Game(board, players);
+
+        game.forceNextDiceRoll(2);
+        game.forceNextDiceRoll(2);
+        // Force dice roll so player passes Home
+        // 8 + 4 = 12 so wraps to 2
+
+        game.playRounds(1, null);
+
+        assertEquals(initialBalance + 200, player.getBalance());
+        // Player should have received £200 bonus (rent/100 = 0 because rent is 15)
+    }
+}package s5a_cycle;
+
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class Stage5aTest {
+    @Test
+    public void testCycle() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        //board should be created once after the loop is done
+        Player player = new Player();
+        //player obkect and store it in a variable
+        List<Player> players = new ArrayList<>();
+        //ArrayList of Player
+        players.add(player);
+        //add player to list
+        Game game = new Game(board, players);
+        //new game object
+        player.setPosition(0);
+        //set player pos to 0
+        game.setCycleRaceSquare(12);
+        //marks position 12 as a cycle race square
+        player.setPosition(12);
+        //set player's position to 12
+        game.playerOnSquare(player, null);
+        //cyclerace square logic
+        assertTrue(player.getCycleRestriction());
+
+        game.setNextDiceRoll(2);
+        game.setNextDiceRoll(3);
+        //return a 5 this is for testing
+        //I can use set or force they do the same thing
+        game.playRounds(1, null);
+        //next turn apply rule for the cycle square
+        assertEquals(12, player.getPosition());
+        //player's position is still 12 (unchamged)
+    }
+
+    @Test
+    public void testCycleRoll() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        //board should be created once after the loop is done
+        Player player = new Player();
+        //player obkect and store it in a variable
+        List<Player> players = new ArrayList<>();
+        //ArrayList of Player
+        players.add(player);
+        //add player to list
+        Game game = new Game(board, players);
+        //new game object
+        player.setPosition(0);
+        //set player pos to 0
+        game.setCycleRaceSquare(12);
+        //marks position 12 as a cycle race square
+        player.setPosition(12);
+        //set player's position to 12
+        game.playerOnSquare(player, null);
+        //cyclerace square logic
+        assertTrue(player.getCycleRestriction());
+        game.forceNextDiceRoll(1);
+        //FORCES 1st die to 1
+        game.forceNextDiceRoll(1);
+        //FORCES 2nd die to 1
+        //return a 2 this is for testing
+        game.playRounds(1, null);
+        //next turn apply rule for the cycle square
+        assertEquals(14, player.getPosition());
+        //player's position is 14 (updated)
+        assertFalse(player.getCycleRestriction());
+        //same thing but to test the low roll
+    }
+
+    @Test
+    public void testCycleWithFour() {
+        //when the dice rolls 4
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+        //new player with default balance and pos at 0
+        player.setPosition(2);
+        //moves the player to square 5
+        player.setCycleRestriction(true);
+        //the player lansed on a cycle square on their previous turn
+        List<Player> players = List.of(player);
+        //List with just the player
+        Game game = new Game(board, players);
+        game.setCycleRaceSquare(10);
+        //the game knows that square 5 is cycle square and if the player alands on it execute the function
+        game.setNextDiceRoll(2);
+        // Force first die to 2
+        game.setNextDiceRoll(2);
+        // Force second die to 2
+        //not random for test purpouse returns 4
+        //is meant to miss turn
+        game.playRounds(1, null);
+        //one round and there is only one player for test
+        assertEquals(2, player.getPosition());
+        //checks that the player's pisition is 5
+        assertFalse(player.getCycleRestriction());
+        //after turn player doesn't have the cycle restriction
+    }
+
+    @Test
+    public void testCycleRestrictionWithMultiplePlayers() {
+        // Create board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        // Create 2 players
+        Player player1 = new Player();
+        Player player2 = new Player();
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+        Game game = new Game(board, players);
+        // Set position 3 as cycle square
+        game.setCycleRaceSquare(3);
+        // Both players land on cycle square
+        player1.setPosition(3);
+        player2.setPosition(3);
+        // Force dice roll to 6 (high roll - should restrict movement)
+        game.forceNextDiceRoll(3);
+        game.forceNextDiceRoll(3);
+        // Play 1 round
+        game.playRounds(1, null);
+        // Both players should NOT have moved
+        assertEquals(3, player1.getPosition());
+        assertEquals(3, player2.getPosition());
+    }
+
+    @Test
+    public void testCycleRestrictionRemovedAfterTurun() {
+        // Create board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+        Game game = new Game(board, players);
+        // Set position 3 as cycle square
+        game.setCycleRaceSquare(3);
+        // Player lands on cycle square
+        player.setPosition(3);
+        //1st turn and restricyion applies
+        game.forceNextDiceRoll(3);
+        game.forceNextDiceRoll(3);
+        game.playRounds(1, null);
+        // Player should not have moved
+        assertEquals(3, player.getPosition());
+        // Player should have restriction flag set
+        assertTrue(player.getCycleRestriction());
+        //2nd turn and restriction removed
+        game.forceNextDiceRoll(1);
+        game.forceNextDiceRoll(2);
+        game.playRounds(1, null);
+        // Player should have moved
+        assertNotEquals(3, player.getPosition());
+    }
+
+    @Test
+    public void testNoCycleSquareOnPropertySquare() {
+        // Create board with 16 squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        // Add a property at position 3
+        Property property = new Property("Test Street", 100, 10);
+        squares.set(3, property);
+        Board board = new Board(squares);
+        Player player = new Player();
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+        Game game = new Game(board, players);
+        game.setCycleRaceSquare(3);
+        //try to set cycle square on property square
+        assertFalse(game.getCycleRacePosition(3));
+        //property priority
+    }
+
+    @Test
+    public void testCycleSquareCannotBeSetHome() {
+        // Create board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+        Game game = new Game(board, players);
+        game.setCycleRaceSquare(0);
+        //tries to set cycle square at home
+        assertFalse(game.getCycleRacePosition(0));
+        //home can't be cycle square
+    }
+
+    @Test
+    public void testLowRollAllowsMovementFromCycle() {
+        // Create board with 16 empty squares
+        List<Property> squares = new ArrayList<>(16);
+        for (int i = 0; i < 16; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+        Player player = new Player();
+        List<Player> players = new ArrayList<>();
+        players.add(player);
+        Game game = new Game(board, players);
+        // Set position 3 as cycle square
+        game.setCycleRaceSquare(3);
+        // Player lands on cycle square
+        player.setPosition(3);
+        // Force roll of 3 (should allow movement)
+        game.forceNextDiceRoll(1);
+        game.forceNextDiceRoll(2);
+        game.playRounds(1, null);
+        // Player should have moved (roll 3 or less allows movement)
+        assertNotEquals(3, player.getPosition());
+    }
+
+    @Test
+    void testCycleRestrictionRollExactly4() {
+        List<Property> squares = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            squares.add(null);
+        }
+        Board board = new Board(squares);
+
+        Player player = new Player();
+        player.setCycleRestriction(true);
+        player.setPosition(5);
+
+        List<Player> players = List.of(player);
+        Game game = new Game(board, players);
+
+        game.forceNextDiceRoll(2);
+        game.forceNextDiceRoll(2);
+        game.playRounds(1, null);
+
+        assertEquals(5, player.getPosition());
+    }
+}
+package s5b_underground;
+import com.cm6123.monopoly.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+    public class Stage5bTest {
+
+        @Test
+        public void testUndergroundStation() {
+            UndergroundStation station = new UndergroundStation(7);
+            //underground pos object position 7
+            assertEquals(7, station.getStationPosition());
+            //confirms position
+        }
+
+        @Test
+        public void testBoardUndergroundStation() {
+            List<Property> squares = new ArrayList<>();
+            for (int i = 0; i < 16; i++) {
+                squares.add(null);
+                //create a board with 16 empty squares
+                //2 stations that can be added to the board
+                //return objects to be at 2 positions retur true
+                //the other positions return false
+            }
+
+            Board board = new Board(squares);
+            //new board object
+            UndergroundStation stationA = new UndergroundStation(7);
+            UndergroundStation stationB = new UndergroundStation(14);
+            //2 underground station positions
+            board.addUndergroundStation(stationA);
+            //station at square 7
+            board.addUndergroundStation(stationB);
+            //station at square 14
+            assertTrue(board.getUndergroundStation(7));
+            assertTrue(board.getUndergroundStation(14));
+            //there are stations at these squares so the board should say true
+            assertFalse(board.getUndergroundStation(3));
+            //there is no station at square 3 so the soard should say false
+        }
+
+        @Test
+        public void testPassHomeAndTotal() {
+            List<Property> squares = new ArrayList<>();
+            //holds 16 items null for roads
+            for (int i = 0; i < 16; i++) {
+                //loop runs 16 times
+                squares.add(null);
+            }
+            Board board = new Board(squares);
+            UndergroundStation stationA = new UndergroundStation(14);
+            UndergroundStation stationB = new UndergroundStation(2);
+            board.addUndergroundStation(stationA);
+            board.addUndergroundStation(stationB);
+            Player player = new Player();
+            player.setBalance(1000);
+            player.setPosition(14);
+            List<Player> players = new ArrayList<>();
+            //empty list to hold player objects
+            players.add(player);
+            //puts player into list
+            Game game = new Game(board, players);
+            //creates a new game
+            game.playerOnSquare(player, null);
+            //should move player to square 2 and add total balance
+            assertEquals(2, player.getPosition());
+            //checks player was moved to square 2
+            assertEquals(1200, player.getBalance());
+            //checks the alance increased by 200
+            //no properties for this example
+        }
+
+        @Test
+        public void testGetToOtherStationsWithThreeStations() {
+            List<Property> squares = new ArrayList<>();
+            for (int i = 0; i < 16; i++) {
+                squares.add(null);
+            }
+            Board board = new Board(squares);
+            board.addUndergroundStation(new UndergroundStation(4));
+            //station at position 4
+            board.addUndergroundStation(new UndergroundStation(9));
+            //station at position 9
+            board.addUndergroundStation(new UndergroundStation(13));
+            //station at position 13
+            for (int i = 0; i < 100; i++) {
+                int other = board.getOtherStation(4);
+                assertNotEquals(4, other);
+                //must not resturn pos 4
+                assertTrue(List.of(9, 13).contains(other));
+                //Verifies TRUE other has to be 9 or 13
+            }
+        }
+
+        @Test
+        public void testStationTeleportNoHomeBonusWhenNotPassingHome() {
+            // Create board with 16 squares
+            List<Property> squares = new ArrayList<>(16);
+            for (int i = 0; i < 16; i++) {
+                squares.add(null);
+            }
+            Board board = new Board(squares);
+            // Stations at 2 and 10 (2->10 does NOT pass Home)
+            board.addUndergroundStation(new UndergroundStation(2));
+            board.addUndergroundStation(new UndergroundStation(10));
+            Player player = new Player();
+            player.setPosition(2);
+            int initialBalance = player.getBalance();
+            List<Player> players = new ArrayList<>();
+            players.add(player);
+            Game game = new Game(board, players);
+            // Player lands on station at position 2
+            game.playerOnSquare(player, null);
+            // Player should NOT have received Home bonus
+            assertEquals(initialBalance, player.getBalance());
+        }
+    }
+package s5b_underground;
+import com.cm6123.monopoly.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+    public class Stage5bTest {
+
+        @Test
+        public void testUndergroundStation() {
+            UndergroundStation station = new UndergroundStation(7);
+            //underground pos object position 7
+            assertEquals(7, station.getStationPosition());
+            //confirms position
+        }
+
+        @Test
+        public void testBoardUndergroundStation() {
+            List<Property> squares = new ArrayList<>();
+            for (int i = 0; i < 16; i++) {
+                squares.add(null);
+                //create a board with 16 empty squares
+                //2 stations that can be added to the board
+                //return objects to be at 2 positions retur true
+                //the other positions return false
+            }
+
+            Board board = new Board(squares);
+            //new board object
+            UndergroundStation stationA = new UndergroundStation(7);
+            UndergroundStation stationB = new UndergroundStation(14);
+            //2 underground station positions
+            board.addUndergroundStation(stationA);
+            //station at square 7
+            board.addUndergroundStation(stationB);
+            //station at square 14
+            assertTrue(board.getUndergroundStation(7));
+            assertTrue(board.getUndergroundStation(14));
+            //there are stations at these squares so the board should say true
+            assertFalse(board.getUndergroundStation(3));
+            //there is no station at square 3 so the soard should say false
+        }
+
+        @Test
+        public void testPassHomeAndTotal() {
+            List<Property> squares = new ArrayList<>();
+            //holds 16 items null for roads
+            for (int i = 0; i < 16; i++) {
+                //loop runs 16 times
+                squares.add(null);
+            }
+            Board board = new Board(squares);
+            UndergroundStation stationA = new UndergroundStation(14);
+            UndergroundStation stationB = new UndergroundStation(2);
+            board.addUndergroundStation(stationA);
+            board.addUndergroundStation(stationB);
+            Player player = new Player();
+            player.setBalance(1000);
+            player.setPosition(14);
+            List<Player> players = new ArrayList<>();
+            //empty list to hold player objects
+            players.add(player);
+            //puts player into list
+            Game game = new Game(board, players);
+            //creates a new game
+            game.playerOnSquare(player, null);
+            //should move player to square 2 and add total balance
+            assertEquals(2, player.getPosition());
+            //checks player was moved to square 2
+            assertEquals(1200, player.getBalance());
+            //checks the alance increased by 200
+            //no properties for this example
+        }
+
+        @Test
+        public void testGetToOtherStationsWithThreeStations() {
+            List<Property> squares = new ArrayList<>();
+            for (int i = 0; i < 16; i++) {
+                squares.add(null);
+            }
+            Board board = new Board(squares);
+            board.addUndergroundStation(new UndergroundStation(4));
+            //station at position 4
+            board.addUndergroundStation(new UndergroundStation(9));
+            //station at position 9
+            board.addUndergroundStation(new UndergroundStation(13));
+            //station at position 13
+            for (int i = 0; i < 100; i++) {
+                int other = board.getOtherStation(4);
+                assertNotEquals(4, other);
+                //must not resturn pos 4
+                assertTrue(List.of(9, 13).contains(other));
+                //Verifies TRUE other has to be 9 or 13
+            }
+        }
+
+        @Test
+        public void testStationTeleportNoHomeBonusWhenNotPassingHome() {
+            // Create board with 16 squares
+            List<Property> squares = new ArrayList<>(16);
+            for (int i = 0; i < 16; i++) {
+                squares.add(null);
+            }
+            Board board = new Board(squares);
+            // Stations at 2 and 10 (2->10 does NOT pass Home)
+            board.addUndergroundStation(new UndergroundStation(2));
+            board.addUndergroundStation(new UndergroundStation(10));
+            Player player = new Player();
+            player.setPosition(2);
+            int initialBalance = player.getBalance();
+            List<Player> players = new ArrayList<>();
+            players.add(player);
+            Game game = new Game(board, players);
+            // Player lands on station at position 2
+            game.playerOnSquare(player, null);
+            // Player should NOT have received Home bonus
+            assertEquals(initialBalance, player.getBalance());
+        }
+    }
