@@ -262,36 +262,20 @@ public final class Game {
 
     /**
      * What to do with the square the player is standing on.
+     * Delegates to the square's whenLand method.
      * @param currentplayer the player whose turn it currently is
      * @param scanner the scanner used for user input
      */
     public void playerOnSquare(final Player currentplayer, final Scanner scanner) {
-        boolean movingForward = false;
-        //declare movingForward variable
-        //player's current pos to check for us for pass HOME check
         int currentPosition = currentplayer.getPosition();
-        if (board.getUndergroundStation(currentPosition)) {
-            //if statement calls method in Board.java to check square status
-            int newPosition = board.getOtherStation(currentPosition);
-            //return RANDOM pos for another station
-            //store it as var newPosition so player will move
-            currentplayer.setPosition(newPosition);
-            //player moved to a different station imediately
-            if (newPosition < currentPosition) {
-                movingForward = true;
-                //pass rules for Home
-                //direction matters to see if player recieves money
-                int reward = movementManager.getReward(currentplayer);
-                currentplayer.setBalance(currentplayer.getBalance() + reward);
-            }
-            return;
-        }
+
         if (cycleManager.getCycleRacePosition(currentPosition)) {
             currentplayer.setCycleRestriction(true);
             return;
         }
-        //Handle property or ther squares
-        propertyManager.handleNonStationSquare(currentplayer, scanner);
+
+        Square square = board.getSquare(currentPosition);
+        square.whenLand(this, currentplayer, scanner);
     }
 
     /**
