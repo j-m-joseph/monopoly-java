@@ -4,6 +4,8 @@ import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Game;
 import com.cm6123.monopoly.Player;
 import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.Road;
 import com.cm6123.monopoly.app.Application;
 import com.cm6123.monopoly.app.MonopolyGame;
 import org.junit.jupiter.api.Test;
@@ -68,10 +70,10 @@ public class Stage1Test {
 
     @Test
     public void testMoveWithPassingHome() {
-     List<Property> squares = new ArrayList<>(16);
+     List<Square> squares = new ArrayList<>(16);
      //Board empty with 16 squares
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
@@ -99,9 +101,9 @@ public class Stage1Test {
     @Test
     public void testGameRuns() {
         //Create a board with 16 empty squares (null properties)
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
@@ -153,9 +155,9 @@ public class Stage1Test {
     @Test
     public void testPlayerMovesToEndOfBoard() {
         //Create a board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -171,9 +173,9 @@ public class Stage1Test {
     @Test
     public void testPlayerMovesExactBoardSize() {
         //Create a board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -189,9 +191,9 @@ public class Stage1Test {
     @Test
     public void testPlayerMovesFromHome() {
         //Create a board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -207,9 +209,9 @@ public class Stage1Test {
     @Test
     public void testMultiplePlayersMove() {
         //Create a board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
@@ -233,9 +235,9 @@ public class Stage1Test {
     @Test
     public void testPlayerCannotGoNegative() {
         //Create a board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -279,9 +281,9 @@ public class Stage1Test {
     }
     @Test
     void testPlayerDoesNotPassHome() {
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 

@@ -3,6 +3,8 @@ package s2_purchase;
 import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Player;
 import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.Road;
 import com.cm6123.monopoly.Game;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -15,10 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class Stage2Test {
     @Test
     public void testPropertyPurchase() {
-        List<Property> squares = new ArrayList<>();
-        squares.add(new Property("Armagh Road", 20, 3));
+        Property propertyRoad = new Property("Property Road", 20, 3);
+        List<Square> squares = new ArrayList<>();
+        squares.add(propertyRoad);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -32,15 +35,16 @@ public class Stage2Test {
         Scanner testScanner = new Scanner("yes");
         game.playerOnSquare(player, testScanner);
         assertEquals(980, player.getBalance());
-        assertSame(player, squares.get(0).getPropertyOwner());
+        assertSame(player, propertyRoad.getPropertyOwner());
     }
     @Test
     public void testCannotAffordProperty() {
         //creates a board with a property
-        List<Property> squares = new ArrayList<>();
-        squares.add(new Property("Test street", 2000, 100));
+        Property testStreet = new Property("Test street", 2000, 100);
+        List<Square> squares = new ArrayList<>();
+        squares.add(testStreet);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         //creates a new board objexct with squares list I already made
@@ -63,23 +67,24 @@ public class Stage2Test {
         // Balance should stay 1000 (unchanged) because couldn't afford it
         assertEquals(1000, player.getBalance());
         // Property should have no owner
-        assertEquals(null, squares.get(0).getPropertyOwner());
+        assertEquals(null, testStreet.getPropertyOwner());
     }
 
     @Test
     public void testAlreadyOwnedProperty() {
         // Create board with property
-        List<Property> squares = new ArrayList<>();
-        squares.add(new Property("Test Street", 50, 5));
+        Property testStreet = new Property("Test Street", 50, 5);
+        List<Square> squares = new ArrayList<>();
+        squares.add(testStreet);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
         // Player 1 owns the property
         Player player1 = new Player();
         player1.setBalance(1000);
-        squares.get(0).setPropertyOwner(player1);
+        testStreet.setPropertyOwner(player1);
 
         // Player 2 tries to buy it
         Player player2 = new Player();
@@ -98,16 +103,18 @@ public class Stage2Test {
         // Player 2's balance should NOT change
         assertEquals(995, player2.getBalance());
         // Player 1 should still own it
-        assertSame(player1, squares.get(0).getPropertyOwner());
+        assertSame(player1, testStreet.getPropertyOwner());
     }
 
     @Test
     public void testDeclinePurchase() {
         // Create board with property
-        List<Property> squares = new ArrayList<>();
-        squares.add(new Property("Test Street", 50, 5));
+        Property testStreet = new Property("Test Street", 50, 5);
+        List<Square> squares = new ArrayList<>();
+        squares.add(testStreet);
+
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
@@ -126,7 +133,7 @@ public class Stage2Test {
         // Balance should NOT change
         assertEquals(1000, player.getBalance());
         // Property should have no owner
-        assertEquals(null, squares.get(0).getPropertyOwner());
+        assertEquals(null, testStreet.getPropertyOwner());
     }
 }
 //previous attempt but modified

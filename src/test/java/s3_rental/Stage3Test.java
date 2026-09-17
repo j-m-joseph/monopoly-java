@@ -4,6 +4,8 @@ import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Game;
 import com.cm6123.monopoly.Player;
 import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.Road;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +18,10 @@ public class Stage3Test {
     public void testPropertyRentalTransfers() {
 
         Property Coraline = new Property("Coraline Road", 100, 10);
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         squares.add(Coraline);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player playerA = new Player();
@@ -40,10 +42,10 @@ public class Stage3Test {
     public void testLandOnOwnProperty() {
         // Create property
         Property property = new Property("My Street", 100, 10);
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         squares.add(property);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
@@ -68,10 +70,10 @@ public class Stage3Test {
     public void testNotEnoughMoneyForRent() {
         // Create expensive property
         Property property = new Property("Test Street", 100, 500);
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         squares.add(property);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
@@ -100,10 +102,10 @@ public class Stage3Test {
     public void testAccurateRentalAmount() {
         //creates property with details
         Property property = new Property("Test Street", 100, 25);
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         squares.add(property);
         for (int i = 0; i < 15; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         // Player A owns the property

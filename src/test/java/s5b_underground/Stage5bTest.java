@@ -1,7 +1,14 @@
 package s5b_underground;
-import com.cm6123.monopoly.*;
+
+import com.cm6123.monopoly.Board;
 import java.util.ArrayList;
 import java.util.List;
+import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Road;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.UndergroundStation;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
         @Test
         public void testBoardUndergroundStation() {
-            List<Property> squares = new ArrayList<>();
+            List<Square> squares = new ArrayList<>();
             for (int i = 0; i < 16; i++) {
-                squares.add(null);
+                squares.add(new Road("Road"));
                 //create a board with 16 empty squares
                 //2 stations that can be added to the board
                 //return objects to be at 2 positions retur true
@@ -44,11 +51,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
         @Test
         public void testPassHomeAndTotal() {
-            List<Property> squares = new ArrayList<>();
+            List<Square> squares = new ArrayList<>();
             //holds 16 items null for roads
             for (int i = 0; i < 16; i++) {
                 //loop runs 16 times
-                squares.add(null);
+                squares.add(new Road("Road"));
             }
             Board board = new Board(squares);
             UndergroundStation stationA = new UndergroundStation(14);
@@ -75,9 +82,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
         @Test
         public void testGetToOtherStationsWithThreeStations() {
-            List<Property> squares = new ArrayList<>();
+            List<Square> squares = new ArrayList<>();
             for (int i = 0; i < 16; i++) {
-                squares.add(null);
+                squares.add(new Road("Road"));
             }
             Board board = new Board(squares);
             board.addUndergroundStation(new UndergroundStation(4));
@@ -98,9 +105,9 @@ import static org.junit.jupiter.api.Assertions.*;
         @Test
         public void testStationTeleportNoHomeBonusWhenNotPassingHome() {
             // Create board with 16 squares
-            List<Property> squares = new ArrayList<>(16);
+            List<Square> squares = new ArrayList<>(16);
             for (int i = 0; i < 16; i++) {
-                squares.add(null);
+                squares.add(new Road("Road"));
             }
             Board board = new Board(squares);
             // Stations at 2 and 10 (2->10 does NOT pass Home)

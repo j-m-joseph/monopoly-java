@@ -4,6 +4,8 @@ import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Game;
 import com.cm6123.monopoly.Player;
 import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.Road;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Stage4Test {
     @Test
     public void testplayerBankruptcyRecovery() {
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Property player1Property = new Property("Hobbit road", 200, 10);
         Property player2Property = new Property("Waverly road", 500, 50);
@@ -47,9 +49,9 @@ public class Stage4Test {
     @Test
     public void testBankruptcyWithZeroBalance() {
         // Create board with property
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Property property = new Property("Test road", 200, 10);
         squares.set(3, property);
@@ -82,9 +84,9 @@ public class Stage4Test {
     @Test
     public void testBankruptcyRemovesPlayer() {
         // Create board with property
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Property property = new Property("Test Street", 100, 500);
         squares.set(3, property);
@@ -127,9 +129,9 @@ public class Stage4Test {
     @Test
     public void testBankruptcySellsProperties() {
         // Create board with properties
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Property property1 = new Property("Property 1", 200, 10);
         Property property2 = new Property("Property 2", 300, 20);
@@ -175,9 +177,9 @@ public class Stage4Test {
 
     @Test
     void testPassHomeWithPropertiesAndBonus() {
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
             // Board with only one property at position 5, rest null
 
         }

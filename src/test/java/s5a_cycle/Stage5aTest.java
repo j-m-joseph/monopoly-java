@@ -4,6 +4,8 @@ import com.cm6123.monopoly.Board;
 import com.cm6123.monopoly.Game;
 import com.cm6123.monopoly.Player;
 import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.Road;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Stage5aTest {
     @Test
     public void testCycle() {
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         //board should be created once after the loop is done
@@ -48,9 +50,9 @@ public class Stage5aTest {
 
     @Test
     public void testCycleRoll() {
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         //board should be created once after the loop is done
@@ -87,9 +89,9 @@ public class Stage5aTest {
     @Test
     public void testCycleWithFour() {
         //when the dice rolls 4
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -120,9 +122,9 @@ public class Stage5aTest {
     @Test
     public void testCycleRestrictionWithMultiplePlayers() {
         // Create board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         // Create 2 players
@@ -150,9 +152,9 @@ public class Stage5aTest {
     @Test
     public void testCycleRestrictionRemovedAfterTurun() {
         // Create board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -182,9 +184,9 @@ public class Stage5aTest {
     @Test
     public void testNoCycleSquareOnPropertySquare() {
         // Create board with 16 squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         // Add a property at position 3
         Property property = new Property("Test Street", 100, 10);
@@ -203,9 +205,9 @@ public class Stage5aTest {
     @Test
     public void testCycleSquareCannotBeSetHome() {
         // Create board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -221,9 +223,9 @@ public class Stage5aTest {
     @Test
     public void testLowRollAllowsMovementFromCycle() {
         // Create board with 16 empty squares
-        List<Property> squares = new ArrayList<>(16);
+        List<Square> squares = new ArrayList<>(16);
         for (int i = 0; i < 16; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
         Player player = new Player();
@@ -244,9 +246,9 @@ public class Stage5aTest {
 
     @Test
     void testCycleRestrictionRollExactly4() {
-        List<Property> squares = new ArrayList<>();
+        List<Square> squares = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            squares.add(null);
+            squares.add(new Road("Road"));
         }
         Board board = new Board(squares);
 
