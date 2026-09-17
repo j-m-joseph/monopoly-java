@@ -262,12 +262,19 @@ public final class Game {
 
     /**
      * What to do with the square the player is standing on.
+     * Stations are checked first (Board will store them seperately).
      * Delegates to the square's whenLand method.
      * @param currentplayer the player whose turn it currently is
      * @param scanner the scanner used for user input
      */
     public void playerOnSquare(final Player currentplayer, final Scanner scanner) {
         int currentPosition = currentplayer.getPosition();
+
+        if (board.getUndergroundStation(currentPosition) && !currentplayer.getJustTeleported()) {
+            currentplayer.setJustTeleported(true);
+            handleStationLanding(currentplayer);
+            return;
+        }
 
         if (cycleManager.getCycleRacePosition(currentPosition)) {
             currentplayer.setCycleRestriction(true);
