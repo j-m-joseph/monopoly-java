@@ -1,6 +1,12 @@
 package com.cm6123.monopoly.app;
 
-import com.cm6123.monopoly.*;
+import com.cm6123.monopoly.Board;
+import com.cm6123.monopoly.Game;
+import com.cm6123.monopoly.Player;
+import com.cm6123.monopoly.Property;
+import com.cm6123.monopoly.Road;
+import com.cm6123.monopoly.Square;
+import com.cm6123.monopoly.UndergroundStation;
 import com.cm6123.monopoly.game.Welcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
