@@ -142,7 +142,10 @@ public class Stage5aTest {
         // Force dice roll to 6 (high roll - should restrict movement)
         game.forceNextDiceRoll(3);
         game.forceNextDiceRoll(3);
-        // Play 1 round
+        // Player 1: 3+3 = 6
+        game.forceNextDiceRoll(3);
+        game.forceNextDiceRoll(3);
+        // Player 2: 3+3 = 6
         game.playRounds(1, null);
         // Both players should NOT have moved
         assertEquals(3, player1.getPosition());
